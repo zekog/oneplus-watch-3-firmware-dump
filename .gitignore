@@ -42,3 +42,9 @@ __pycache__/
 !extracted_images/kernel_with_symbols.elf
 !mcu_firmware/
 !mcu_firmware/**
+!extracted_images/vendor_dlkm_extracted/
+!extracted_images/vendor_dlkm_extracted/**
+
+# Agent execution logs
+agent_log.txt
+blockers.txt

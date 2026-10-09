@@ -1,0 +1,7 @@
+# Soft dependencies extracted from modules themselves.
+softdep soc_sleep_stats pre: smem
+softdep q6_notifier_dlkm pre: qcom_q6v5_pas
+softdep msm_video pre: subsys-pil-tz msm-mmrm
+softdep msm_kgsl pre: arm_smmu nvmem_qfprom socinfo
+softdep oplus_crown pre: focaltech_fts zinitix
+softdep qmi_helpers pre: qrtr

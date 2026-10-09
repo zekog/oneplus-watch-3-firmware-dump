@@ -1,0 +1,137 @@
+/vendor/lib/modules/oplus_shutdown_detect.ko: /vendor/lib/modules/qpnp-smblite-main.ko /vendor/lib/modules/slate_events_bridge.ko /vendor/lib/modules/slate_events_bridge_rpmsg.ko /vendor/lib/modules/qcom-vadc-common.ko /vendor/lib/modules/qpnp-power-on.ko
+/vendor/lib/modules/audio_prm_dlkm.ko: /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/qce50_dlkm.ko: /vendor/lib/modules/sps_drv.ko
+/vendor/lib/modules/soc_sleep_stats.ko:
+/vendor/lib/modules/cpufreq_userspace.ko:
+/vendor/lib/modules/qpnp-power-on.ko:
+/vendor/lib/modules/smp2p_sleepstate.ko:
+/vendor/lib/modules/qti-pmic-lpm.ko:
+/vendor/lib/modules/eud.ko:
+/vendor/lib/modules/qcedev-mod_dlkm.ko: /vendor/lib/modules/qce50_dlkm.ko /vendor/lib/modules/sps_drv.ko
+/vendor/lib/modules/bluesleep.ko: /vendor/lib/modules/msm_geni_serial.ko
+/vendor/lib/modules/qcom_tsens.ko:
+/vendor/lib/modules/q6_notifier_dlkm.ko: /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/oplus_comm_master.ko: /vendor/lib/modules/oplus_comm_master_bt.ko /vendor/lib/modules/spi-msm-geni.ko
+/vendor/lib/modules/rpm-smd-debug.ko:
+/vendor/lib/modules/wsa883x_dlkm.ko: /vendor/lib/modules/swr_dlkm.ko /vendor/lib/modules/wcd_core_dlkm.ko
+/vendor/lib/modules/oplus_ddr_freq.ko:
+/vendor/lib/modules/oplus_comm_master_bt.ko:
+/vendor/lib/modules/usb_f_gsi.ko:
+/vendor/lib/modules/bam_dma.ko:
+/vendor/lib/modules/usb_bam.ko: /vendor/lib/modules/sps_drv.ko
+/vendor/lib/modules/icc-debug.ko:
+/vendor/lib/modules/i2c-qcom-geni.ko:
+/vendor/lib/modules/qcom_iommu_debug.ko:
+/vendor/lib/modules/qcom_ramdump.ko:
+/vendor/lib/modules/audio_pkt_dlkm.ko: /vendor/lib/modules/audpkt_ion_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/lmh_cpu_vdd_cdev.ko:
+/vendor/lib/modules/msm_sysstats.ko:
+/vendor/lib/modules/msm_video.ko:
+/vendor/lib/modules/qcom_q6v5_pas.ko: /vendor/lib/modules/qcom_ramdump.ko /vendor/lib/modules/qcom_pil_info.ko /vendor/lib/modules/qcom_q6v5.ko /vendor/lib/modules/qcom_sysmon.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/spi-msm-geni.ko:
+/vendor/lib/modules/swr_ctrl_dlkm.ko: /vendor/lib/modules/swr_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/bcl_off_cdev.ko:
+/vendor/lib/modules/slate_events_bridge_rpmsg.ko:
+/vendor/lib/modules/qti_qmi_cdev.ko: /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/rq_stats.ko:
+/vendor/lib/modules/msm_geni_serial.ko:
+/vendor/lib/modules/msm_kgsl.ko: /vendor/lib/modules/msm_sysstats.ko /vendor/lib/modules/msm_performance.ko
+/vendor/lib/modules/besbev_dlkm.ko: /vendor/lib/modules/wcd9xxx_dlkm.ko /vendor/lib/modules/audio_prm_dlkm.ko /vendor/lib/modules/pmw5100-spmi_dlkm.ko /vendor/lib/modules/swr_dlkm.ko /vendor/lib/modules/wcd_core_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/oplus_crown.ko: /vendor/lib/modules/panel_event_notifier.ko
+/vendor/lib/modules/qcom_lpm.ko:
+/vendor/lib/modules/slate_events_bridge.ko: /vendor/lib/modules/slate_events_bridge_rpmsg.ko
+/vendor/lib/modules/focaltech_fts.ko: /vendor/lib/modules/panel_event_notifier.ko
+/vendor/lib/modules/gpr_dlkm.ko: /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/msm_performance.ko:
+/vendor/lib/modules/icc-test.ko:
+/vendor/lib/modules/phy-xgene.ko:
+/vendor/lib/modules/qmi_helpers.ko:
+/vendor/lib/modules/ehset.ko:
+/vendor/lib/modules/frpc-adsprpc.ko: /vendor/lib/modules/qcom_ramdump.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/bes2610.ko: /vendor/lib/modules/spi-msm-geni.ko /vendor/lib/modules/cfg80211.ko
+/vendor/lib/modules/qti_devfreq_cdev.ko:
+/vendor/lib/modules/spi-geni-qcom.ko:
+/vendor/lib/modules/q6_pdr_dlkm.ko: /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/startup_monitor.ko:
+/vendor/lib/modules/core_hang_detect.ko:
+/vendor/lib/modules/stub_dlkm.ko:
+/vendor/lib/modules/qcom_hib.ko:
+/vendor/lib/modules/oplus_dummy_codec_dlkm.ko: /vendor/lib/modules/oplus_comm_master.ko /vendor/lib/modules/oplus_comm_master_bt.ko /vendor/lib/modules/spi-msm-geni.ko
+/vendor/lib/modules/rdbg.ko:
+/vendor/lib/modules/zinitix.ko: /vendor/lib/modules/panel_event_notifier.ko
+/vendor/lib/modules/gpucc-monaco.ko:
+/vendor/lib/modules/qcom_sysmon.ko: /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/stm_core.ko:
+/vendor/lib/modules/bwmon.ko:
+/vendor/lib/modules/oplus_link_power.ko:
+/vendor/lib/modules/audio_extend_dlkm.ko:
+/vendor/lib/modules/rx_macro_dlkm.ko: /vendor/lib/modules/swr_ctrl_dlkm.ko /vendor/lib/modules/swr_dlkm.ko /vendor/lib/modules/wcd_core_dlkm.ko /vendor/lib/modules/bolero_cdc_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/boot_stats.ko:
+/vendor/lib/modules/besbev-slave_dlkm.ko: /vendor/lib/modules/swr_dlkm.ko
+/vendor/lib/modules/i2c-msm-geni.ko:
+/vendor/lib/modules/qseecom_proxy.ko:
+/vendor/lib/modules/qrng_dlkm.ko:
+/vendor/lib/modules/usb_f_cdev.ko:
+/vendor/lib/modules/panel_event_notifier.ko:
+/vendor/lib/modules/qcom-spmi-temp-alarm.ko:
+/vendor/lib/modules/tz_log_dlkm.ko:
+/vendor/lib/modules/va_macro_dlkm.ko: /vendor/lib/modules/swr_ctrl_dlkm.ko /vendor/lib/modules/swr_dlkm.ko /vendor/lib/modules/wcd_core_dlkm.ko /vendor/lib/modules/bolero_cdc_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/qcom-vadc-common.ko:
+/vendor/lib/modules/audpkt_ion_dlkm.ko:
+/vendor/lib/modules/snd_event_dlkm.ko:
+/vendor/lib/modules/qti_qmi_sensor.ko: /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/smcinvoke_dlkm.ko: /vendor/lib/modules/qseecom_proxy.ko
+/vendor/lib/modules/cfg80211.ko:
+/vendor/lib/modules/slim-qcom-ngd-ctrl.ko: /vendor/lib/modules/slimbus.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/qti_cpufreq_cdev.ko:
+/vendor/lib/modules/bcl_soc.ko:
+/vendor/lib/modules/spf_core_dlkm.ko: /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/cc_dlkm.ko: /vendor/lib/modules/audio_cc_ipc_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/pinctrl-spmi-gpio.ko:
+/vendor/lib/modules/debugcc-monaco.ko:
+/vendor/lib/modules/qcom-cpufreq-hw-debug.ko:
+/vendor/lib/modules/subsystem_sleep_stats.ko:
+/vendor/lib/modules/qcom_pil_info.ko:
+/vendor/lib/modules/nvmem_qfprom.ko:
+/vendor/lib/modules/machine_dlkm.ko: /vendor/lib/modules/wsa883x_dlkm.ko /vendor/lib/modules/besbev_dlkm.ko /vendor/lib/modules/wcd9xxx_dlkm.ko /vendor/lib/modules/audio_prm_dlkm.ko /vendor/lib/modules/pmw5100-spmi_dlkm.ko /vendor/lib/modules/swr_dlkm.ko /vendor/lib/modules/wcd_core_dlkm.ko /vendor/lib/modules/bolero_cdc_dlkm.ko /vendor/lib/modules/audpkt_ion_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/hdcp_qseecom_dlkm.ko: /vendor/lib/modules/smcinvoke_dlkm.ko /vendor/lib/modules/qseecom_proxy.ko
+/vendor/lib/modules/msm_drm.ko: /vendor/lib/modules/panel_event_notifier.ko
+/vendor/lib/modules/swr_dlkm.ko:
+/vendor/lib/modules/dummy_nfc.ko: /vendor/lib/modules/oplus_comm_master_bt.ko
+/vendor/lib/modules/slimbus.ko:
+/vendor/lib/modules/cpufreq_ondemand.ko:
+/vendor/lib/modules/qcom-spmi-adc5-gen3.ko: /vendor/lib/modules/qcom-vadc-common.ko
+/vendor/lib/modules/usb_f_qdss.ko: /vendor/lib/modules/usb_bam.ko /vendor/lib/modules/sps_drv.ko
+/vendor/lib/modules/qpnp-smblite-main.ko: /vendor/lib/modules/slate_events_bridge.ko /vendor/lib/modules/slate_events_bridge_rpmsg.ko /vendor/lib/modules/qcom-vadc-common.ko /vendor/lib/modules/qpnp-power-on.ko
+/vendor/lib/modules/msm_gpi.ko:
+/vendor/lib/modules/phy-generic.ko:
+/vendor/lib/modules/qrtr-smd.ko:
+/vendor/lib/modules/adsp_loader_dlkm.ko: /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/sysmon_subsystem_stats.ko:
+/vendor/lib/modules/qti-qbg-main.ko: /vendor/lib/modules/qpnp-smblite-main.ko /vendor/lib/modules/slate_events_bridge.ko /vendor/lib/modules/slate_events_bridge_rpmsg.ko /vendor/lib/modules/qcom-vadc-common.ko /vendor/lib/modules/qpnp-power-on.ko
+/vendor/lib/modules/sps_drv.ko:
+/vendor/lib/modules/pinctrl_lpi_dlkm.ko: /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/qcom-spmi-adc5.ko: /vendor/lib/modules/qcom-vadc-common.ko
+/vendor/lib/modules/i2c-gpio.ko:
+/vendor/lib/modules/audio_cc_ipc_dlkm.ko: /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/bolero_cdc_dlkm.ko: /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/msm_show_resume_irq.ko:
+/vendor/lib/modules/qcrypto-msm_dlkm.ko: /vendor/lib/modules/qce50_dlkm.ko /vendor/lib/modules/sps_drv.ko
+/vendor/lib/modules/wcd9xxx_dlkm.ko: /vendor/lib/modules/audio_prm_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/thermal_pause.ko:
+/vendor/lib/modules/tx_macro_dlkm.ko: /vendor/lib/modules/swr_ctrl_dlkm.ko /vendor/lib/modules/swr_dlkm.ko /vendor/lib/modules/wcd_core_dlkm.ko /vendor/lib/modules/bolero_cdc_dlkm.ko /vendor/lib/modules/spf_core_dlkm.ko /vendor/lib/modules/gpr_dlkm.ko /vendor/lib/modules/snd_event_dlkm.ko /vendor/lib/modules/q6_notifier_dlkm.ko /vendor/lib/modules/q6_pdr_dlkm.ko /vendor/lib/modules/pdr_interface.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/pinctrl-spmi-mpp.ko:
+/vendor/lib/modules/pmw5100-spmi_dlkm.ko:
+/vendor/lib/modules/wcd_core_dlkm.ko:
+/vendor/lib/modules/msm_lmh_dcvs.ko:
+/vendor/lib/modules/regulator_cdev.ko:
+/vendor/lib/modules/glink_pkt.ko:
+/vendor/lib/modules/qseecom_dlkm.ko: /vendor/lib/modules/qseecom_proxy.ko
+/vendor/lib/modules/memlat.ko:
+/vendor/lib/modules/power_state.ko:
+/vendor/lib/modules/qcom_q6v5.ko: /vendor/lib/modules/qcom_sysmon.ko /vendor/lib/modules/qmi_helpers.ko
+/vendor/lib/modules/i2c-dev.ko:
+/vendor/lib/modules/haptic.ko:
+/vendor/lib/modules/msm_sharedmem.ko:
+/vendor/lib/modules/msm-tsens-driver.ko:
+/vendor/lib/modules/pdr_interface.ko: /vendor/lib/modules/qmi_helpers.ko

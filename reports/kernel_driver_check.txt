@@ -1,0 +1,101 @@
+================================================================================
+OnePlus Watch 3 (OPWWE251) - GKI Kernel Symbol & Driver Audit Report
+Target: extracted_images/kernel_with_symbols.elf
+Total Symbols in ELF: 141776
+Architecture: AArch64 (ARM64)
+Kernel: Linux 5.15.170-android14-11 (Generic Kernel Image / GKI)
+================================================================================
+
+1. ARCHITECTURAL SUMMARY
+In Android 14 GKI architecture, platform-specific and board-specific drivers
+(such as touchscreen controllers, dedicated IMU sensors, RTOS co-processors,
+and proprietary vendor PMICs) are intentionally decoupled from the monolithic
+kernel image (boot.img) and loaded dynamically as GKI modules from vendor_dlkm
+or the vendor_boot ramdisk.
+
+2. TARGET DRIVER SYMBOL AUDIT IN GKI MONOLITHIC KERNEL:
+
+[FocalTech Touch (ft5x06 / focaltech)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[Zinitix Touch (zinitix)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[Goodix Touch/FP (goodix)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[Bosch IMU (bmi*)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[STMicroelectronics IMU (lsm6d* / lsm9d*)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[InvenSense IMU (icm*)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[Maxim Health/PPG (max86*)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[TI Analog Front End (afe*)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[PixArt Health Sensor (pmw*)] - ABSENT (0 symbols in monolithic GKI kernel)
+  Explanation: Driver is built out-of-tree as a vendor module or handled via RTOS/QMI.
+
+[Generic Touchscreen Framework] - FOUND (3 symbols):
+  - touchscreen_parse_properties
+  - touchscreen_report_pos
+  - touchscreen_set_mt_pos
+
+[Generic Power Supply Class] - FOUND (82 symbols):
+  - power_supply_am_i_supplied
+  - power_supply_attr_group
+  - power_supply_attr_groups
+  - power_supply_attr_is_visible
+  - power_supply_attr_is_visible.cfi_jt
+  - power_supply_attrs
+  - power_supply_batinfo_ocv2cap
+  - POWER_SUPPLY_CAPACITY_LEVEL_TEXT
+  - power_supply_changed
+  - power_supply_changed.cfi_jt
+  - power_supply_changed_work
+  - power_supply_changed_work.cfi_jt
+  - POWER_SUPPLY_CHARGE_TYPE_TEXT
+  - power_supply_check_supplies
+  - power_supply_class
+  - power_supply_class_exit
+  - power_supply_class_exit.cfi_jt
+  - power_supply_class_init
+  - power_supply_create_triggers
+  - power_supply_deferred_register_work
+
+[Generic Thermal Zone Framework] - FOUND (42 symbols):
+  - thermal_zone_attribute_group
+  - thermal_zone_attribute_groups
+  - thermal_zone_bind_cooling_device
+  - thermal_zone_bind_cooling_device.cfi_jt
+  - thermal_zone_create_device_groups
+  - thermal_zone_destroy_device_groups
+  - thermal_zone_dev_attrs
+  - thermal_zone_device_check
+  - thermal_zone_device_check.cfi_jt
+  - thermal_zone_device_critical
+  - thermal_zone_device_critical.cfi_jt
+  - thermal_zone_device_disable
+  - thermal_zone_device_disable.cfi_jt
+  - thermal_zone_device_enable
+  - thermal_zone_device_enable.cfi_jt
+  - thermal_zone_device_is_enabled
+  - thermal_zone_device_register
+  - thermal_zone_device_register.cfi_jt
+  - thermal_zone_device_set_mode
+  - thermal_zone_device_set_policy
+
+================================================================================
+3. CONCLUSION & DRIVER LOCATION MAPPING
+- Touchscreen: focaltech_fts.ko (FocalTech) and zinitix.ko (Zinitix) in vendor_dlkm
+- Rotary Crown: oplus_crown.ko (PixArt PAT9125 / Mixosense MOT6010) in vendor_dlkm
+- Coprocessor/RTOS: bes2610.ko (Bestechnic BES2610) in vendor_dlkm & vendor_boot
+- Health PPG/AFE: pmw5100-spmi_dlkm.ko in vendor_dlkm
+- Sensor Hub: oplus_snshub.ko in vendor_boot + qti_qmi_sensor.ko in vendor_dlkm
+================================================================================
