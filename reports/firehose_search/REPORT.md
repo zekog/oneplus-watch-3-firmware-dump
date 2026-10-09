@@ -1,33 +1,33 @@
 # Firehose Loader Search - OnePlus Watch 3 (OPWWE251)
 
-## Podsumowanie
-- **Platforma:** Qualcomm Snapdragon W5+ Gen 1 (`monaco`, SW5100 / SDA5100)
-- **Cel:** Znalezienie loadera Firehose (EDL flash programmer, np. `prog_firehose_ddr.elf` lub `xbl_s_devprg_ns.melf`) dla trybu Emergency Download (EDL 9008)
-- **Status:** **NOT FOUND** (Brak samodzielnego pliku loadera Firehose w publicznym obrazie OTA)
+## Executive Summary
+- **Platform:** Qualcomm Snapdragon W5+ Gen 1 (`monaco`, SW5100 / SDA5100)
+- **Objective:** Locate a Firehose loader (EDL flash programmer, e.g., `prog_firehose_ddr.elf` or `xbl_s_devprg_ns.melf`) for Emergency Download mode (EDL 9008).
+- **Status:** **NOT FOUND** (No standalone Firehose programmer file is included in the public OTA update image).
 
 ---
 
-## Przeszukane pliki
+## Scanned Binaries
 
-| Nazwa pliku | Rozmiar | Wynik skanowania sygnatur (binwalk / unblob) | Znalezione sygnatury EDL / Sahara |
+| Filename | File Size | Signature Scan Results (binwalk / unblob) | Detected EDL / Sahara Signatures |
 |---|---|---|---|
-| `xbl.elf` | 2.83 MB | ELF 64-bit; UEFI FV (0x6C000); GZIP (0xA9368); Osadzony ELF64 (0x279000) | `Sahara: Hello pkt sent`, `pmic DevPrg init`, `Entering DeviceProg lite`, `sbl1_sahara.c`, `dload_entry` |
-| `NON-HLOS.bin` | 33.05 MB | FAT16 / MBN baseband modem subsystem | `qdlDg*b` (losowy ciąg / brak protokołu) |
-| `xbl_config.elf` | 23.47 KB | ELF 64-bit LSB (konfiguracja XBL / PMIC) | Brak sygnatur Firehose/Sahara |
-| `dspso.bin` | 64.00 MB | Obraz bibliotek współdzielonych Hexagon DSP | Brak sygnatur Firehose/Sahara |
-| `static_nvbk.bin`| 10.00 MB | Kopia zapasowa pamięci trwałej NVRAM | Brak sygnatur Firehose/Sahara |
-| `qupv3fw.elf` | 58.01 KB | ELF 64-bit LSB (firmware silnika QUP v3) | Brak sygnatur Firehose/Sahara |
-| `rpm.mbn` | 243.47 KB | MBN Cortex-M3 (Resource Power Manager) | Brak sygnatur Firehose/Sahara |
+| `xbl.elf` | 2.83 MB | ELF 64-bit; UEFI FV (0x6C000); GZIP (0xA9368); Embedded ELF64 (0x279000) | `Sahara: Hello pkt sent`, `pmic DevPrg init`, `Entering DeviceProg lite`, `sbl1_sahara.c`, `dload_entry` |
+| `NON-HLOS.bin` | 33.05 MB | FAT16 / MBN baseband modem subsystem | `qdlDg*b` (random string / no protocol implementation) |
+| `xbl_config.elf` | 23.47 KB | ELF 64-bit LSB (XBL / PMIC configuration) | No Firehose/Sahara signatures |
+| `dspso.bin` | 64.00 MB | Hexagon DSP shared library image | No Firehose/Sahara signatures |
+| `static_nvbk.bin`| 10.00 MB | Persistent NVRAM backup storage | No Firehose/Sahara signatures |
+| `qupv3fw.elf` | 58.01 KB | ELF 64-bit LSB (QUP v3 engine firmware) | No Firehose/Sahara signatures |
+| `rpm.mbn` | 243.47 KB | MBN Cortex-M3 (Resource Power Manager) | No Firehose/Sahara signatures |
 | `abl.elf` | 263.42 KB | UEFI FV (`_FVH`), LinuxLoader PE32 | `WriteRecoveryMessageEdl`, `fastboot` |
-| `imagefv.elf` | 16.00 KB | UEFI FV (`_FVH`), zasoby ikon graficznych BMP | Brak sygnatur Firehose/Sahara |
-| `hyp.mbn` | 354.51 KB | MBN EL2 (Qualcomm Hypervisor) | Brak sygnatur Firehose/Sahara |
-| `tz.mbn` | 2.94 MB | MBN EL3 (Qualcomm TrustZone OS) | Brak sygnatur Firehose/Sahara |
+| `imagefv.elf` | 16.00 KB | UEFI FV (`_FVH`), BMP graphical icon resources | No Firehose/Sahara signatures |
+| `hyp.mbn` | 354.51 KB | MBN EL2 (Qualcomm Hypervisor) | No Firehose/Sahara signatures |
+| `tz.mbn` | 2.94 MB | MBN EL3 (Qualcomm TrustZone OS) | No Firehose/Sahara signatures |
 
 ---
 
-## Znalezione sygnatury
+## Identified Signatures
 
-Wyniki analizy ciągów znaków zapisane w `reports/firehose_search/signatures_found.txt`:
+String analysis results recorded in `reports/firehose_search/signatures_found.txt`:
 
 ```text
 === xbl.elf ===
@@ -67,7 +67,7 @@ qdlDg*b
 === tz.mbn ===
 ```
 
-Dodatkowo w `xbl.elf` (offset binarny `0x3e510` - `0x3e530`) zidentyfikowano:
+Additionally, in `xbl.elf` (binary offset `0x3e510` - `0x3e530`), the following strings were identified:
 - `pmic DevPrg init`
 - `Entering DeviceProg lite`
 - `/dev/icbcfg/boot`
@@ -75,9 +75,9 @@ Dodatkowo w `xbl.elf` (offset binarny `0x3e510` - `0x3e530`) zidentyfikowano:
 
 ---
 
-## Znalezione pliki (melf, devprg, firehose)
+## Matched Files (melf, devprg, firehose)
 
-Wyniki przeszukiwania całego drzewa roboczego (`reports/firehose_search/file_search.txt`):
+Workspace-wide search results (`reports/firehose_search/file_search.txt`):
 
 ```text
 ./extracted_images/vendor_dump/firmware/mcufirmware/OPWWE251/programmer.bin
@@ -85,24 +85,24 @@ Wyniki przeszukiwania całego drzewa roboczego (`reports/firehose_search/file_se
 ./mcu_firmware/OPWWE251/programmer.bin
 ```
 
-*Uwaga:* Pliki `programmer.bin` należą do mikrokontrolera Bestechnic BES2610 (koprocesor RTOS), a nie do platformy Qualcomm Snapdragon W5+.
+*Note:* The `programmer.bin` files belong to the Bestechnic BES2610 microcontroller (RTOS co-processor), not to the Qualcomm Snapdragon W5+ platform.
 
 ---
 
-## Wnioski
+## Conclusions
 
-- **Czy znaleziono loader Firehose?** **NIE**.
-  Oryginalny pakiet aktualizacji OTA nie zawiera samodzielnego pliku loadera Firehose (`prog_firehose_ddr.elf` lub `prog_firehose_lite.elf`), co jest typową praktyką producentów (Qualcomm / OnePlus dostarcza programatory Firehose wyłącznie w wewnętrznych narzędziach serwisowych typu MSM Download Tool / Oppo Flash Tool).
-- **Kluczowe odkrycie wewnętrzne:**
-  1. W `xbl.elf` zintegrowano procedury rozruchowe `DevPrg lite` (`Entering DeviceProg lite`, `pmic DevPrg init`).
-  2. Pod adresem offsetu `0x279000` (2 592 768 B) wewnątrz `xbl.elf` wykryto i wyodrębniono autonomiczny plik binarny ELF64 (**`reports/firehose_search/xbl_melf_candidate.bin`**, 376 832 bajtów).
-  3. Wyodrębniony obraz to **`XBLRamDump`** (`XBLRamDump.dll`), implementujący protokół Qualcomm Sahara (`sbl1_sahara.c`), obsługę resetu QPST oraz procedury awaryjnego zrzutu pamięci przez USB (`QUSB_BULK`).
+- **Was a Firehose loader found?** **NO**.
+  The stock OTA update package does not contain a standalone Firehose programmer file (`prog_firehose_ddr.elf` or `prog_firehose_lite.elf`), which is standard practice among OEMs (Qualcomm and OnePlus distribute Firehose programmers strictly within internal factory servicing packages such as MSM Download Tool / Oppo Flash Tool).
+- **Key Internal Findings:**
+  1. `xbl.elf` integrates `DevPrg lite` bootstrap routines (`Entering DeviceProg lite`, `pmic DevPrg init`).
+  2. At byte offset `0x279000` (2,592,768 B) inside `xbl.elf`, a standalone ELF64 binary was identified and extracted (**`reports/firehose_search/xbl_melf_candidate.bin`**, 376,832 bytes).
+  3. The extracted image is **`XBLRamDump`** (`XBLRamDump.dll`), implementing the Qualcomm Sahara protocol (`sbl1_sahara.c`), QPST reset handling, and emergency memory dump procedures over USB (`QUSB_BULK`).
 
 ---
 
-## Następne kroki
+## Next Steps
 
-- [ ] Pogłębiona deasemblacja w Ghidra dla `xbl.elf` i wyodrębnionego `xbl_melf_candidate.bin` pod kątem obsługi poleceń Sahara i wejścia w DeviceProg.
-- [ ] Zbadanie pakietów oprogramowania dla **Mobvoi TicWatch Pro 5 / TicWatch Pro 5 Enduro** (ten sam procesor Qualcomm Snapdragon W5+ Gen 1 / SW5100), aby sprawdzić, czy społeczność nie uzyskała kompatybilnego pliku Firehose MELF/ELF.
-- [ ] Poszukiwanie wycieków fabrycznych narzędzi OnePlus/Oppo (Oppo Flash Tool dla OPWWE251).
-- [ ] Konsultacja ze społecznością badaczy EDL na forum XDA Developers.
+- [ ] In-depth disassembly in Ghidra for `xbl.elf` and the extracted `xbl_melf_candidate.bin` to analyze Sahara command handling and DeviceProg entry conditions.
+- [ ] Investigate firmware dumps from **Mobvoi TicWatch Pro 5 / TicWatch Pro 5 Enduro** (same Qualcomm Snapdragon W5+ Gen 1 / SW5100 platform) to see if the community obtained a compatible Firehose MELF/ELF loader.
+- [ ] Monitor for leaked OnePlus/Oppo factory servicing tools (Oppo Flash Tool for OPWWE251).
+- [ ] Consult with the EDL research community on the XDA Developers forum.
