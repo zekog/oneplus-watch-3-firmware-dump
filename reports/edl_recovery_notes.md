@@ -32,6 +32,12 @@ fastboot oem enter-edl
 - Charger detection timeout (`fedl, chgr_det_timeout`)
 - Failed boot counter exceeds threshold (`EDL: sbl1_dload_entry: dload_entry_count > 1`)
 
+### 4. Confirmed Empirical Vector (2026-10-09)
+- `fastboot oem edl` works directly on OPWWE251 from fastboot mode
+- Device enters EDL and enumerates as `05c6:9008` (Qualcomm, Inc. Gobi Wireless Modem QDL mode)
+- Auto-timeout: **~10 seconds** without host traffic
+- Auto-reboot to system after timeout (failsafe verified)
+
 ---
 
 ## Exploitation Ideas & Recovery Strategies
@@ -60,3 +66,12 @@ fastboot oem enter-edl
 - [ ] Determine exact VBUS voltage threshold triggering `fedl, vbus_low`
 - [ ] Verify if `fastboot reboot-edl` or OEM vendor commands trigger `WriteRecoveryMessageEdl`
 - [ ] Test VBUS-low resistive divider method on a test device
+
+---
+
+## Empirical Confirmation (2026-10-09)
+- EDL entry via `fastboot oem edl`: **CONFIRMED WORKING**
+- Auto-timeout: **~10 seconds, CONFIRMED**
+- Brick risk from entering EDL: **ZERO**
+- Flashing capability: **STILL BLOCKED** (no signed Firehose loader)
+

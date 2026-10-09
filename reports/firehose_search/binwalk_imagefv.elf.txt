@@ -1,0 +1,29 @@
+Scan Report for: imagefv.elf
+Full Path: firmware-update/imagefv.elf
+Size: 16,384 bytes (0.02 MB)
+SHA-256: 8c904a49fc3dcffc989858971856d1640735ba9f2b469b5dedf108f5a03e272d
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+0            0x0            ELF 32-bit LSB executable/relocatable
+8192         0x2000         UEFI Firmware Volume (header at 0x2028)
+8264         0x2048         UEFI FFS GUID (072be68a-6ec0-b209-9b83)
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 16.00 KB                                          │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+        Chunks distribution        
+┏━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type ┃   Size   ┃  Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━┩
+│ ELF32      │ 16.00 KB │ 100.00% │
+│ UNKNOWN    │  0.00 B  │  0.00%  │
+└────────────┴──────────┴─────────┘
+Chunk identification ratio: 100.00%
+[?25h

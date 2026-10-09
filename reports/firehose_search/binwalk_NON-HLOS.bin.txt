@@ -1,0 +1,62 @@
+Scan Report for: NON-HLOS.bin
+Full Path: firmware-update/NON-HLOS.bin
+Size: 34,653,696 bytes (33.05 MB)
+SHA-256: 06d47205e54f5bc3ef2828675348afa085a1f1bffb4f3e5ea1a455f000a394d8
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+3            0x3            FAT Filesystem (MSDOS 5.0)
+54           0x36           FAT16 Volume Identifier
+820736       0xC8600        ELF 32-bit LSB executable/relocatable
+15025664     0xE54600       ELF 32-bit LSB executable/relocatable
+15042048     0xE58600       ELF 32-bit LSB executable/relocatable
+15549952     0xED4600       ELF 32-bit LSB executable/relocatable
+15582720     0xEDC600       ELF 64-bit LSB executable/relocatable
+16221696     0xF78600       ELF 64-bit LSB executable/relocatable
+16254464     0xF80600       ELF 32-bit LSB executable/relocatable
+16401920     0xFA4600       ELF 32-bit LSB executable/relocatable
+16418304     0xFA8600       ELF 32-bit LSB executable/relocatable
+16565760     0xFCC600       ELF 32-bit LSB executable/relocatable
+16582144     0xFD0600       ELF 64-bit LSB executable/relocatable
+16729600     0xFF4600       ELF 64-bit LSB executable/relocatable
+16745984     0xFF8600       ELF 32-bit LSB executable/relocatable
+24696836     0x178D804      GZIP compressed data
+27166208     0x19E8600      ELF 32-bit LSB executable/relocatable
+27821568     0x1A88600      ELF 32-bit LSB executable/relocatable
+27837952     0x1A8C600      ELF 32-bit LSB executable/relocatable
+29738496     0x1C5C600      ELF 32-bit LSB executable/relocatable
+29754880     0x1C60600      ELF 64-bit LSB executable/relocatable
+31753728     0x1E48600      ELF 64-bit LSB executable/relocatable
+31770112     0x1E4C600      ELF 64-bit LSB executable/relocatable
+31950336     0x1E78600      ELF 64-bit LSB executable/relocatable
+31983104     0x1E80600      ELF 64-bit LSB executable/relocatable
+32327168     0x1ED4600      ELF 64-bit LSB executable/relocatable
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: /home/zek/Pobrane/opw3                                          │
+│ firmware/firmware-update/NON-HLOS.bin_extract                                │
+│ Extracted files: 177                                                         │
+│ Extracted directories: 8                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 64.39 MB                                          │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+        Chunks distribution        
+┏━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┓
+┃ Chunk type ┃   Size    ┃ Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━┩
+│ FAT        │ 33.05 MB  │ 96.62% │
+│ ELF64      │ 631.90 KB │ 1.80%  │
+│ ELF32      │ 506.82 KB │ 1.45%  │
+│ ZLIB       │ 46.00 KB  │ 0.13%  │
+│ UNKNOWN    │  0.00 B   │ 0.00%  │
+└────────────┴───────────┴────────┘
+Chunk identification ratio: 100.00%
+               Encountered errors                
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Severity         ┃ Name                       ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ Severity.WARNING │ ExtractCommandFailedReport │
+└──────────────────┴────────────────────────────┘
+[?25h

@@ -1,0 +1,27 @@
+Scan Report for: tz.mbn
+Full Path: firmware-update/tz.mbn
+Size: 3,080,618 bytes (2.94 MB)
+SHA-256: 7b944238190df99550b328bf4d45a1cf8de1293ce11488596f619bac62044f0d
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+0            0x0            ELF 64-bit LSB executable/relocatable
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 2.94 MB                                           │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+       Chunks distribution        
+┏━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type ┃  Size   ┃  Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━┩
+│ ELF64      │ 2.94 MB │ 100.00% │
+│ UNKNOWN    │ 0.00 B  │  0.00%  │
+└────────────┴─────────┴─────────┘
+Chunk identification ratio: 100.00%
+[?25h

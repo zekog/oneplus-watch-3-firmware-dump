@@ -191,3 +191,22 @@ All unpacked UEFI objects are saved in `reports/uefi_extracted/`.
 - XBL (eXtended Boot Loader), ABL (Application Boot Loader)
 - TLMM (Top Level Mode Multiplexer), PMIC (Qualcomm PM5100)
 - EDL Mode = Qualcomm Emergency Download Mode (USB VID:PID 05C6:9008)
+
+---
+
+## Empirical EDL Test Results (2026-10-09)
+
+Software-only EDL entry confirmed on working device.
+
+Commands tested:
+1. `adb reboot bootloader` -> fastboot mode (VID:PID 22d9:2024)
+2. `fastboot oem edl` -> EDL mode (VID:PID 05c6:9008)
+
+EDL behavior:
+- Device enumerates as Qualcomm Gobi QDL (05c6:9008)
+- Auto-timeout: ~10 seconds
+- Auto-reboot to system after timeout
+- No partitions modified during entry
+
+See [`reports/edl_confirmation.md`](edl_confirmation.md) for full details.
+

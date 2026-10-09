@@ -1,0 +1,19 @@
+Scan Report for: static_nvbk.bin
+Full Path: firmware-update/static_nvbk.bin
+Size: 10,485,760 bytes (10.00 MB)
+SHA-256: 0e7dc81aa056126557f189f03db732540b92d415ca7fee1e2c91d41fc9b60741
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+No standard signatures recognized.
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 10.00 MB                                          │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+[?25h

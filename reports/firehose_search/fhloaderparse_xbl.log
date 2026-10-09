@@ -1,0 +1,24 @@
+=== fhloaderparse / MELF Extraction Analysis for xbl.elf ===
+Timestamp: 2026-10-09
+File: firmware-update/xbl.elf (2,969,600 bytes)
+
+1. MELF Signature Check:
+- Searched for explicit "melf" / "MELF" headers across xbl.elf:
+  Result: 0 occurrences found.
+- Note: 'fhloaderparse' PyPI utility was unavailable in modern environment.
+  Analysis was performed via binary signature scanning, offset inspection, and ELF parsing.
+
+2. Embedded Sub-Images in xbl.elf:
+- Offset 0x000000: Primary XBL SBL1 ELF (64-bit ARM64)
+- Offset 0x03E510: References to "pmic DevPrg init" and "Entering DeviceProg lite" in SBL1 logic.
+- Offset 0x06C000: UEFI Firmware Volume (size: 0x1AC000)
+- Offset 0x279000 (2,592,768): Embedded Standalone ELF64 Binary (size: 376,832 bytes / 368 KB)
+  * Magic: 0x7F 'E' 'L' 'F' (64-bit LSB executable, ARM aarch64, Entry: 0xC353000)
+  * Target ID: *XBLRamDump*boot_images/Build/AthertonLAB/Dll/RELEASE/XBLRamDump.dll
+  * Protocol Implementation: Sahara Memory Dump & Emergency Reset (sbl1_sahara.c)
+  * Strings: "Sahara: Hello pkt sent", "Sahara: Hello Response Received", "Sahara: Reset request received", "QPST send reset command"
+  * Subsystems: QUSB_BULK, QUSB_PORT_PRIM, XBLRamDumpMCUPowerDown, Slate Minidump
+
+3. Extraction:
+- Cut embedded ELF at offset 0x279000 (376,832 bytes)
+- Saved to: reports/firehose_search/xbl_melf_candidate.bin

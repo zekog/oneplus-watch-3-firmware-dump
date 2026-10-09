@@ -1,0 +1,27 @@
+Scan Report for: xbl_config.elf
+Full Path: firmware-update/xbl_config.elf
+Size: 24,032 bytes (0.02 MB)
+SHA-256: ccbcae70452df3f0a0608eb3a0074c3b7a8309413c6a6aaa736c9c095b5cd480
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+0            0x0            ELF 64-bit LSB executable/relocatable
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 23.47 KB                                          │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+        Chunks distribution        
+┏━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type ┃   Size   ┃  Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━┩
+│ ELF64      │ 23.47 KB │ 100.00% │
+│ UNKNOWN    │  0.00 B  │  0.00%  │
+└────────────┴──────────┴─────────┘
+Chunk identification ratio: 100.00%
+[?25h

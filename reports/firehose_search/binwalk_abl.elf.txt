@@ -1,0 +1,29 @@
+Scan Report for: abl.elf
+Full Path: firmware-update/abl.elf
+Size: 269,744 bytes (0.26 MB)
+SHA-256: 5a6d46b9f22f13cc1e040b0a527c7001d45c78d2b6b677e93bd015a6ba0e4859
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+0            0x0            ELF 32-bit LSB executable/relocatable
+4096         0x1000         UEFI Firmware Volume (header at 0x1028)
+4168         0x1048         UEFI FFS GUID (9e21fd93-9c72-4c15-8c4b)
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 263.42 KB                                         │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+        Chunks distribution         
+┏━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type ┃   Size    ┃  Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━┩
+│ ELF32      │ 263.42 KB │ 100.00% │
+│ UNKNOWN    │  0.00 B   │  0.00%  │
+└────────────┴───────────┴─────────┘
+Chunk identification ratio: 100.00%
+[?25h

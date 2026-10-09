@@ -1,0 +1,3 @@
+./extracted_images/vendor_dump/firmware/mcufirmware/OPWWE251/programmer.bin
+./extracted_images/vendor_dump/firmware/mcufirmware/OWWE251/programmer.bin
+./mcu_firmware/OPWWE251/programmer.bin

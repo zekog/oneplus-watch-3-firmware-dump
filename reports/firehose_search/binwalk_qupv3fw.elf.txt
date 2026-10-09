@@ -1,0 +1,27 @@
+Scan Report for: qupv3fw.elf
+Full Path: firmware-update/qupv3fw.elf
+Size: 59,404 bytes (0.06 MB)
+SHA-256: b789b601e511ff37dda979d3f838aa5d37112637f9f1e6c3652a44134b7b173f
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+0            0x0            ELF 32-bit LSB executable/relocatable
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 58.01 KB                                          │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+        Chunks distribution        
+┏━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type ┃   Size   ┃  Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━┩
+│ ELF32      │ 58.01 KB │ 100.00% │
+│ UNKNOWN    │  0.00 B  │  0.00%  │
+└────────────┴──────────┴─────────┘
+Chunk identification ratio: 100.00%
+[?25h

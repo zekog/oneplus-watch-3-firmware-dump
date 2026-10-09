@@ -74,6 +74,7 @@ Located in [`mcu_firmware/OPWWE251/`](mcu_firmware/OPWWE251/):
 
 ### 4. Technical Analysis Reports & Indexes
 Located in [`reports/`](reports/):
+* **[`reports/edl_confirmation.md`](reports/edl_confirmation.md):** Empirical verification of software EDL access, USB VID:PID enumeration, and auto-timeout.
 * **[`reports/bootloader_analysis.md`](reports/bootloader_analysis.md):** In-depth analysis of Qualcomm bootloader binaries, XBL forced EDL conditions, TLMM configurations, and unbricking implications.
 * **[`reports/edl_recovery_notes.md`](reports/edl_recovery_notes.md):** Research notes on non-destructive software EDL entry vectors (VBUS low, failed boot counter) vs hardware test points.
 * **[`reports/vendor_dlkm_modules.csv`](reports/vendor_dlkm_modules.csv):** Detailed CSV index of all 137 vendor kernel modules with file sizes, symbol counts, and driver descriptions.
@@ -139,6 +140,69 @@ XBL contains a built-in failsafe that automatically enters EDL when one of these
 ### ⚠️ WARNING: Water Resistance
 
 OnePlus Watch 3 is rated **5ATM (50 meters water resistance)**. Opening the case to access physical PCB test points permanently destroys the water-resistant adhesive seal. Before flashing any boot-critical partition (`boot`, `init_boot`, `vendor_boot`, `dtbo`, `vbmeta`, `recovery`), be aware that there is currently no confirmed software-only method to recover from a brick.
+
+---
+
+## EDL Access (Software Method Confirmed)
+
+**Update 2026-10-09:** Empirical testing confirmed that OnePlus Watch 3 can enter Qualcomm EDL mode via a software-only method.
+
+### How to enter EDL
+```bash
+adb reboot bootloader      # Enter fastboot
+fastboot oem edl           # Enter EDL
+```
+
+### Verification
+Device enumerates as:
+```text
+Bus 003 Device XXX: ID 05c6:9008 Qualcomm, Inc. Gobi Wireless Modem (QDL mode)
+```
+
+### Auto-timeout
+- **~10 seconds** without host communication
+- Device automatically reboots to system
+- No user intervention required
+- Confirmed failsafe
+
+### What this means
+- EDL entry is **safe** (no partitions modified)
+- Sahara protocol is functional in XBL
+- Device cannot get "stuck" in EDL (timeout guarantees exit)
+- BUT: **flashing still requires signed Firehose loader** (not yet available)
+
+### Safety warnings
+- Do NOT flash anything via EDL without proper loader
+- Do NOT test on daily-driver device
+- See [`reports/edl_confirmation.md`](reports/edl_confirmation.md) and [`reports/edl_recovery_notes.md`](reports/edl_recovery_notes.md)
+
+---
+
+## XBL Sahara Protocol Analysis
+
+Analysis of `firmware-update/xbl.elf` revealed a functional Sahara protocol implementation and "DeviceProg lite" support.
+
+### Confirmed strings in `xbl.elf`
+- `Sahara: Hello pkt sent` (offset `0x002cd590`)
+- `Sahara: Hello Response Received`
+- `Sahara: Reset request received`
+- `sbl1_sahara.c`
+- `Entering DeviceProg lite` (offset `0x0003e510`)
+- `pmic DevPrg init`
+- `QUSB_BULK`, `QUSB_PORT_PRIM`
+- `qusb_ldr_utils_enable_eud_dep_qb`
+
+### Extracted candidate
+[`reports/firehose_search/xbl_melf_candidate.bin`](reports/firehose_search/xbl_melf_candidate.bin) (376 832 B, ELF64 AArch64)
+This is **XBLRamDump** - a Sahara protocol implementation with memory dump capability. It is **NOT** a Firehose loader and cannot be used for flashing.
+
+### EDL failsafe conditions (from XBL strings)
+- `fedl, pmi_not_detected`
+- `fedl, vbus_det_err`
+- `fedl, vbus_low`
+- `fedl, chgr_type_det_err`
+- `fedl, chgr_det_timeout`
+- `EDL: sbl1_dload_entry: dload_entry_count > 1`
 
 ---
 

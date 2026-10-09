@@ -1,0 +1,35 @@
+=== xbl.elf ===
+boot_dload.c
+boot_dload_check
+boot_dload_debug_target.c
+boot_dload_dump.c
+boot_dload_dump_security_regions
+boot_dload_handle_forced_dload_timeout
+boot_error_handler: Ramdump allowed. Trying to enter DLOAD
+boot_init_for_dload
+DloadCookieAddr
+DloadCookieAddr = 0x003D3000 
+DloadCookieAddr not found in uefiplat.cfg
+DloadCookieValue
+DloadCookieValue = 0x10
+DloadCookieValue not found in uefiplat.cfg
+EDL: sbl1_dload_entry: dload_entry_count > 1
+EMERGENCY_DLOAD_TIMEOUT_COOKIE_SET: Reset
+ERROR: Failed to set DLOAD cookie
+pmic DevPrg init
+Sahara: Hello pkt sent
+Sahara: Hello Response Received
+Sahara: Reset request received
+sbl1_hw_dload_init
+sbl1_sahara.c
+=== NON-HLOS.bin ===
+qdlDg*b
+=== xbl_config.elf ===
+=== dspso.bin ===
+=== static_nvbk.bin ===
+=== qupv3fw.elf ===
+=== rpm.mbn ===
+=== abl.elf ===
+=== imagefv.elf ===
+=== hyp.mbn ===
+=== tz.mbn ===

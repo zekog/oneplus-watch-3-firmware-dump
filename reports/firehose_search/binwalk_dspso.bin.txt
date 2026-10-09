@@ -1,0 +1,71 @@
+Scan Report for: dspso.bin
+Full Path: firmware-update/dspso.bin
+Size: 67,108,864 bytes (64.00 MB)
+SHA-256: e98a18bffef01791c722938162f41194fb030a53d0f84ef93ba2f13e6dc858fb
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+5304320      0x50F000       ELF 32-bit LSB executable/relocatable
+5378048      0x521000       ELF 32-bit LSB executable/relocatable
+5406720      0x528000       ELF 32-bit LSB executable/relocatable
+5447680      0x532000       ELF 32-bit LSB executable/relocatable
+5574656      0x551000       ELF 32-bit LSB executable/relocatable
+5849088      0x594000       ELF 32-bit LSB executable/relocatable
+6045696      0x5C4000       ELF 32-bit LSB executable/relocatable
+6168576      0x5E2000       ELF 32-bit LSB executable/relocatable
+6197248      0x5E9000       ELF 32-bit LSB executable/relocatable
+6242304      0x5F4000       ELF 32-bit LSB executable/relocatable
+6467584      0x62B000       ELF 32-bit LSB executable/relocatable
+6676480      0x65E000       ELF 32-bit LSB executable/relocatable
+6864896      0x68C000       ELF 32-bit LSB executable/relocatable
+6909952      0x697000       ELF 32-bit LSB executable/relocatable
+6955008      0x6A2000       ELF 32-bit LSB executable/relocatable
+7041024      0x6B7000       ELF 32-bit LSB executable/relocatable
+7118848      0x6CA000       ELF 32-bit LSB executable/relocatable
+7200768      0x6DE000       ELF 32-bit LSB executable/relocatable
+8110080      0x7BC000       ELF 32-bit LSB executable/relocatable
+8523776      0x821000       ELF 32-bit LSB executable/relocatable
+8560640      0x82A000       ELF 32-bit LSB executable/relocatable
+8896512      0x87C000       ELF 32-bit LSB executable/relocatable
+9375744      0x8F1000       ELF 32-bit LSB executable/relocatable
+9756672      0x94E000       ELF 32-bit LSB executable/relocatable
+10153984     0x9AF000       ELF 32-bit LSB executable/relocatable
+10522624     0xA09000       ELF 32-bit LSB executable/relocatable
+10690560     0xA32000       ELF 32-bit LSB executable/relocatable
+11026432     0xA84000       ELF 32-bit LSB executable/relocatable
+11104256     0xA97000       ELF 32-bit LSB executable/relocatable
+11374592     0xAD9000       ELF 32-bit LSB executable/relocatable
+11534336     0xB00000       ELF 32-bit LSB executable/relocatable
+11624448     0xB16000       ELF 32-bit LSB executable/relocatable
+11784192     0xB3D000       ELF 32-bit LSB executable/relocatable
+12009472     0xB74000       ELF 32-bit LSB executable/relocatable
+12058624     0xB80000       ELF 32-bit LSB executable/relocatable
+12492800     0xBEA000       ELF 32-bit LSB executable/relocatable
+12533760     0xBF4000       ELF 32-bit LSB executable/relocatable
+12574720     0xBFE000       ELF 32-bit LSB executable/relocatable
+12607488     0xC06000       ELF 32-bit LSB executable/relocatable
+12886016     0xC4A000       ELF 32-bit LSB executable/relocatable
+13152256     0xC8B000       ELF 32-bit LSB executable/relocatable
+13234176     0xC9F000       ELF 32-bit LSB executable/relocatable
+13590528     0xCF6000       ELF 32-bit LSB executable/relocatable
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: /home/zek/Pobrane/opw3                                          │
+│ firmware/firmware-update/dspso.bin_extract                                   │
+│ Extracted files: 46                                                          │
+│ Extracted directories: 4                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 71.93 MB                                          │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+       Chunks distribution        
+┏━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓
+┃ Chunk type ┃   Size   ┃ Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━┩
+│ EXTFS      │ 64.00 MB │ 88.98% │
+│ ELF32      │ 7.93 MB  │ 11.02% │
+│ UNKNOWN    │  0.00 B  │ 0.00%  │
+└────────────┴──────────┴────────┘
+Chunk identification ratio: 100.00%
+[?25h

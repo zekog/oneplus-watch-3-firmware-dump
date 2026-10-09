@@ -1,0 +1,33 @@
+Scan Report for: xbl.elf
+Full Path: firmware-update/xbl.elf
+Size: 2,969,600 bytes (2.83 MB)
+SHA-256: 54ef1e98837abb677d10428b1ce5ad6da2954f6d07f72120f9217a4cdfed6495
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+0            0x0            ELF 64-bit LSB executable/relocatable
+323762       0x4F0B2        Qualcomm keyword string: 'dload_entry'
+442368       0x6C000        UEFI Firmware Volume (header at 0x6C028)
+693048       0xA9338        UEFI FFS GUID (9e21fd93-9c72-4c15-8c4b)
+693096       0xA9368        GZIP compressed data
+2592768      0x279000       ELF 64-bit LSB executable/relocatable
+2938256      0x2CD590       Qualcomm keyword string: 'Sahara'
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 2.83 MB                                           │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+       Chunks distribution        
+┏━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type ┃  Size   ┃  Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━┩
+│ ELF64      │ 2.83 MB │ 100.00% │
+│ UNKNOWN    │ 0.00 B  │  0.00%  │
+└────────────┴─────────┴─────────┘
+Chunk identification ratio: 100.00%
+[?25h

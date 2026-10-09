@@ -1,0 +1,27 @@
+Scan Report for: hyp.mbn
+Full Path: firmware-update/hyp.mbn
+Size: 363,016 bytes (0.35 MB)
+SHA-256: 26c0f6d2e97fd45775f2ae8ca1f3d30f2b354108166de22953b2aca5fc422133
+
+DECIMAL      HEXADECIMAL    DESCRIPTION
+------------ -------------- --------------------------------------------------
+0            0x0            ELF 64-bit LSB executable/relocatable
+
+=== unblob summary ===
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 354.51 KB                                         │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+        Chunks distribution         
+┏━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type ┃   Size    ┃  Ratio  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━┩
+│ ELF64      │ 354.51 KB │ 100.00% │
+│ UNKNOWN    │  0.00 B   │  0.00%  │
+└────────────┴───────────┴─────────┘
+Chunk identification ratio: 100.00%
+[?25h
