@@ -1,0 +1,20 @@
+ANDROID OTA FIRMWARE EXTRACTION VERIFICATION REPORT
+Directory: /home/zek/Pobrane/opw3 firmware/extracted_images
+Generated at: 2026-10-09 19:22:57
+
+------------------------------------------------------------------------
+No.  | Filename             | Size (MB)      | Size (Bytes)     | Status
+------------------------------------------------------------------------
+1    | boot.img             |      96.00 MB |      100,663,296 B | VALID
+2    | dtbo.img             |      10.00 MB |       10,485,760 B | VALID
+3    | init_boot.img        |       8.00 MB |        8,388,608 B | VALID
+4    | product.img          |     368.29 MB |      386,179,072 B | VALID
+5    | system.img           |    2051.75 MB |    2,151,415,808 B | VALID
+6    | system_dlkm.img      |      11.09 MB |       11,624,448 B | VALID
+7    | system_ext.img       |      89.79 MB |       94,146,560 B | VALID
+8    | vendor.img           |     537.64 MB |      563,752,960 B | VALID
+9    | vendor_boot.img      |      96.00 MB |      100,663,296 B | VALID
+10   | vendor_dlkm.img      |      25.79 MB |       27,041,792 B | VALID
+------------------------------------------------------------------------
+Total: 10 .img files | 3,294.34 MB (3.22 GB)
+========================================================================

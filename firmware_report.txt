@@ -1,0 +1,178 @@
+================================================================================
+           ONEPLUS WATCH 3 (OPWWE251) FIRMWARE & HAL ANALYSIS REPORT            
+================================================================================
+
+1. PLATFORM & HARDWARE ARCHITECTURE IDENTIFICATION
+--------------------------------------------------------------------------------
+• Device Model      : OnePlus Watch 3 (OPWWE251)
+• Primary SoC (AP)  : Qualcomm Snapdragon W5+ Gen 1 (codename 'monaco', SW5100 / SDA5100)
+• RTOS Co-processor : Bestechnic BES2800 / BES2700 (Dual-core Cortex-M55 + HiFi4 DSP / SSHUB)
+• OS Version        : Android 14 (Wear OS 4 / 5) - boot image header v4 (GKI)
+• Userspace ABI     : ARM 32-bit (armeabi-v7a) with ARM64 Linux Kernel
+
+2. LINUX KERNEL EXTRACTION STATUS VIA MAGISKBOOT
+--------------------------------------------------------------------------------
+Architectural Note regarding Android 13/14 GKI (Generic Kernel Image v4):
+  Under AOSP Boot Header v4 specifications, the 'init_boot.img' partition
+  contains exclusively the generic ramdisk ('ramdisk.cpio'), while the
+  actual Linux 'kernel' Image is located in 'boot.img'.
+
+Magiskboot Unpack Results:
+• init_boot.img -> Extracted generic ramdisk: ramdisk.cpio
+  [KERNEL_SZ = 0, RAMDISK_SZ = 1,449,071 B (ramdisk.cpio = 2.6 MB)]
+• boot.img      -> Extracted GKI kernel     : kernel
+  [KERNEL_SZ = 43,493,888 B (~41.48 MB), KERNEL_FMT = raw ARM64 Image]
+• Kernel Path   : /home/zek/Pobrane/opw3 firmware/extracted_images/boot_dump/kernel
+• Kernel Version: Linux version 5.15.170-android14-11-maybe-dirty (build-user@build-host) (Android (10087095, +pgo, +bolt, +lto, -mlgo, based on r487747c) clang version 17.0.2 (https://android.googlesource.com/toolchain/llvm-project d9f89f4d16663d5012e5c09495f3b30ece3d2362), LLD 17.0.2) #1 SMP PREEMPT Thu Jan 1 00:00:00 UTC 1970
+• Extraction    : SUCCESS (Fully verified)
+
+3. HAL SERVICES IN /vendor/bin/hw/ AND SHARED LIBRARIES (.so)
+--------------------------------------------------------------------------------
+[A] SENSORS & HEALTH TRACKING:
+  HAL Services (/vendor/bin/hw/):
+    - /vendor/bin/hw/android.hardware.sensors-service.multihal (81,720 B)
+    - /vendor/bin/hw/android.hardware.sensors@1.0-service (4,908 B)
+    - /vendor/bin/hw/vendor-oplus-hardware-engsensor@1.0-service (77,408 B)
+    - /vendor/bin/hw/vendor.google_clockwork.healthservices@2-service (103,900 B)
+    - /vendor/bin/hw/vendor.qti.hardware.wristorientation@1.0-service (4,548 B)
+  Shared Libraries (.so):
+    - /vendor/lib/android.hardware.sensors-V2-ndk.so (63,268 B)
+    - /vendor/lib/android.hardware.sensors@1.0.so (73,400 B)
+    - /vendor/lib/android.hardware.sensors@2.0-ScopedWakelock.so (4,500 B)
+    - /vendor/lib/android.hardware.sensors@2.0.so (104,448 B)
+    - /vendor/lib/android.hardware.sensors@2.1.so (107,196 B)
+    - /vendor/lib/vendor.google_clockwork.wristorientation@1.0.so (87,360 B)
+    - /vendor/lib/vendor.oplus.hardware.engsensor@1.0.so (58,308 B)
+    - /vendor/lib/vendor.qti.hardware.wristorientation@1.0-impl.so (23,504 B)
+    - /vendor/lib/hw/android.hardware.sensors@1.0-impl.so (49,880 B)
+  Init Scripts & Configs:
+    - /vendor/etc/init/android.hardware.sensors-service-multihal.rc
+    - /vendor/etc/init/android.hardware.sensors@1.0-service.rc
+    - /vendor/etc/init/vendor-oplus-hardware-engsensor@1.0-service.rc
+    - /vendor/etc/init/vendor.qti.hardware.wristorientation@1.0-service.rc
+  Hardware Device Node:
+    - /dev/std_sns (Primary sensor bus communication interface)
+
+[B] POWER MANAGEMENT & THERMAL CONTROLS:
+  HAL Services (/vendor/bin/hw/):
+    - /vendor/bin/hw/android.hardware.health-service.qti (147,736 B)
+    - /vendor/bin/hw/android.hardware.power-service (19,312 B)
+    - /vendor/bin/hw/android.hardware.thermal-service.qti (167,668 B)
+    - /vendor/bin/hw/powerstatetest-deepsleep (4,088 B)
+    - /vendor/bin/hw/vendor.qti.hardware.limits@1.2-service (56,816 B)
+    - /vendor/bin/hw/vendor.qti.hardware.perf2-hal-service (29,268 B)
+    - /vendor/bin/hw/vendor.qti.hardware.powerstateservice@1.0-service (33,644 B)
+    - /vendor/bin/hw/vendor.qti.hardware.powerstateutility@1.0-service (13,060 B)
+  Shared Libraries (.so):
+    - /vendor/lib/android.hardware.health-V1-ndk.so (42,820 B)
+    - /vendor/lib/android.hardware.health-V3-ndk.so (46,580 B)
+    - /vendor/lib/android.hardware.health@1.0.so (3,900 B)
+    - /vendor/lib/android.hardware.health@2.0.so (111,208 B)
+    - /vendor/lib/android.hardware.health@2.1.so (108,524 B)
+    - /vendor/lib/android.hardware.power-V4-ndk.so (38,708 B)
+    - /vendor/lib/android.hardware.power@1.0.so (57,364 B)
+    - /vendor/lib/android.hardware.power@1.1.so (61,136 B)
+    - /vendor/lib/android.hardware.power@1.2.so (61,492 B)
+    - /vendor/lib/android.hardware.thermal-V1-ndk.so (43,312 B)
+    - /vendor/lib/android.hardware.thermal@1.0.so (58,956 B)
+    - /vendor/lib/android.hardware.thermal@2.0.so (102,916 B)
+    - /vendor/lib/libpower.so (14,864 B)
+    - /vendor/lib/libsystem_health_mon.so (3,368 B)
+    - /vendor/lib/libthermalclient.so (23,036 B)
+    - /vendor/lib/vendor.google_clockwork.healthservices-V2-ndk.so (110,084 B)
+    - /vendor/lib/vendor.qti.esepowermanager@1.0.so (59,352 B)
+    - /vendor/lib/vendor.qti.hardware.powerstateservice@1.0.so (135,924 B)
+    - /vendor/lib/vendor.qti.power.pasrmanager@1.0.so (51,756 B)
+    - /vendor/lib/hw/power.default.so (2,928 B)
+  Init Scripts & Configs:
+    - /vendor/etc/init/android.hardware.health-service.qti.rc
+    - /vendor/etc/init/android.hardware.power-service.rc
+    - /vendor/etc/init/android.hardware.thermal-service.qti.rc
+    - /vendor/etc/init/init_thermal-engine-v2.rc
+    - /vendor/etc/init/powerstateutility.rc
+    - /vendor/etc/init/vendor.google_clockwork.healthservices@2-service.rc
+    - /vendor/etc/init/vendor.qti.hardware.powerstateservice@1.0-service.rc
+
+[C] RTOS CO-PROCESSOR COMMUNICATION (BESTECHNIC BES2800 / BES2700):
+  Primary IPC Service (/vendor/bin/hw/):
+    - /vendor/bin/hw/bg_peekpoke (7,560 B)
+      -> Low-level background processor register peek/poke utility
+    - /vendor/bin/hw/qcli_daemon (10,620 B)
+      -> Qualcomm Command Line Interface daemon for connectivity subsystem
+    - /vendor/bin/hw/vendor-oplus-hardware-transfer@1.0-service (14,288 B)
+      -> HIDL Interface: vendor.oplus.hardware.transfer@1.0::ITransfer (Primary AP <-> RTOS IPC)
+  Transfer HAL Library:
+    - /vendor/lib/vendor.oplus.hardware.transfer@1.0.so (80,552 B)
+  MCU Diagnostic & Flashing Utilities (/vendor/bin/):
+    - /vendor/bin/dump_mcu_i2c.sh (10,630 B)
+    - /vendor/bin/dump_mcu_irq.sh (585 B)
+    - /vendor/bin/i2ctransfer (13,052 B)
+    - /vendor/bin/mcuupdater (46,472 B)
+    - /vendor/bin/oppo_mcu_diag (52,180 B)
+    - /vendor/bin/prepare_mcudump_dir.sh (184 B)
+    - /vendor/bin/run_mcu_atcmd.sh (198 B)
+    - /vendor/bin/switch_mcu_jtag.sh (1,618 B)
+  Init Scripts & Configs:
+    - /vendor/etc/init/init.mcuupdater.rc
+    - /vendor/etc/init/oppo_mcu_diag.rc
+    - /vendor/etc/init/vendor-oplus-hardware-transfer@1.0-service.rc
+  Kernel Driver Node for MCU Flashing:
+    - /dev/mcu_upgrade
+
+4. REGISTERED LOW-LEVEL FIRMWARE BINARIES (.elf, .bin, .mbn)
+--------------------------------------------------------------------------------
+No.  | Category                         | Size         | Relative Path in vendor_dump
+--------------------------------------------------------------------------------
+1    | GPU Adreno / GMU Zap Shader      |    11.4 KB | firmware/a702_zap.mbn
+2    | GPU Adreno / GMU Zap Shader      |     5.0 KB | firmware/a740_zap.elf
+3    | GPU Adreno / GMU Zap Shader      |    11.8 KB | firmware/a740_zap.mbn
+4    | GPU Adreno / GMU Zap Shader      |    11.8 KB | firmware/gen70e00_zap.mbn
+5    | GPU Adreno / GMU Zap Shader      |    65.3 KB | firmware/gmu_gen70200.bin
+6    | GPU Adreno / GMU Zap Shader      |    65.8 KB | firmware/gmu_gen70e00.bin
+7    | GPU Kernel Bytecode / Manifest   |     1.8 KB | gpu/kbc/sequence_manifest.bin
+8    | GPU Kernel Bytecode / Manifest   |    1.62 MB | gpu/kbc/unified_kbcs_32.bin
+9    | GPU Kernel Bytecode / Manifest   |    1.65 MB | gpu/kbc/unified_kbcs_64.bin
+10   | GPU Kernel Bytecode / Manifest   |   207.0 KB | gpu/kbc/unified_ksqs.bin
+11   | IP Accelerator / Network Data Ro |    27.5 KB | firmware/ipa_fws.elf
+12   | RTOS / MCU Co-processor (Cortex- |    6.34 MB | firmware/mcufirmware/OPWWE251/OPWWE251_M55C0_2505201801.bin
+13   | RTOS / MCU Co-processor (Cortex- |    5.57 MB | firmware/mcufirmware/OPWWE251/OPWWE251_M55C1_2505201801.bin
+14   | RTOS / MCU Co-processor (Cortex- |   980.1 KB | firmware/mcufirmware/OPWWE251/OPWWE251_SSHUB_2505201801.bin
+15   | RTOS / MCU Co-processor (Cortex- |   254.1 KB | firmware/mcufirmware/OPWWE251/bootloader.bin
+16   | RTOS / MCU Co-processor (Cortex- |    68.9 KB | firmware/mcufirmware/OPWWE251/programmer.bin
+17   | RTOS / MCU Co-processor (Cortex- |    6.34 MB | firmware/mcufirmware/OWWE251/OWWE251_M55C0_2505201801.bin
+18   | RTOS / MCU Co-processor (Cortex- |    5.57 MB | firmware/mcufirmware/OWWE251/OWWE251_M55C1_2505201801.bin
+19   | RTOS / MCU Co-processor (Cortex- |   980.1 KB | firmware/mcufirmware/OWWE251/OWWE251_SSHUB_2505201801.bin
+20   | RTOS / MCU Co-processor (Cortex- |   254.1 KB | firmware/mcufirmware/OWWE251/bootloader.bin
+21   | RTOS / MCU Co-processor (Cortex- |    68.9 KB | firmware/mcufirmware/OWWE251/programmer.bin
+22   | Touchscreen Controller (Touch IC |    49.1 KB | firmware/focaltech_ts_fw_108003.bin
+23   | Touchscreen Controller (Touch IC |    50.0 KB | firmware/focaltech_ts_fw_108004.bin
+24   | Touchscreen Controller (Touch IC |    48.0 KB | firmware/zinitix_fw_095001.bin
+25   | Touchscreen Controller (Touch IC |    48.0 KB | firmware/zinitix_fw_095002.bin
+26   | Touchscreen Controller (Touch IC |    48.0 KB | firmware/zinitix_fw_095003.bin
+27   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus.mbn
+28   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_4mb.mbn
+29   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_4mb_ecdsa.mbn
+30   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_4mb_unsigned.mbn
+31   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_4mb_v6.mbn
+32   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_4mb_v6_rsa.mbn
+33   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_4mb_v7.mbn
+34   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_5mb.mbn
+35   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_5mb_ecdsa.mbn
+36   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_5mb_unsigned.mbn
+37   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_5mb_v6.mbn
+38   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_5mb_v6_rsa.mbn
+39   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_5mb_v7.mbn
+40   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_5mb_v7_3.mbn
+41   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_ecdsa.mbn
+42   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_unsigned.mbn
+43   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_v6.mbn
+44   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_v6_rsa.mbn
+45   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_v7.mbn
+46   | Video Accelerator / VPU (Venus)  |    1.77 MB | firmware/venus_v7_3.mbn
+47   | Video Accelerator / VPU (Venus)  |    1.93 MB | firmware/vpu20_1v.mbn
+48   | Video Accelerator / VPU (Venus)  |    1.92 MB | firmware/vpu20_1v_unsigned.mbn
+49   | Video Accelerator / VPU (Venus)  |    1.93 MB | firmware/vpu20_4v.mbn
+50   | Video Accelerator / VPU (Venus)  |    1.92 MB | firmware/vpu20_4v_unsigned.mbn
+--------------------------------------------------------------------------------
+Total firmware binaries cataloged: 50 files (73.39 MB total).
+================================================================================

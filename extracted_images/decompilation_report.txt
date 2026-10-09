@@ -1,0 +1,35 @@
+==========================================================================================
+            LINUX KERNEL ELF SYMBOLS & DEVICE TREE (DTS) DECOMPILATION REPORT             
+==========================================================================================
+
+1. KERNEL SYMBOL RECONSTRUCTION STATUS (vmlinux-to-elf)
+------------------------------------------------------------------------------------------
+• Reconstruction Tool       : vmlinux-to-elf v1.3.6 (kallsyms table extraction)
+• Input Raw Kernel Image    : extracted_images/kernel
+• Output Analyzable ELF     : /home/zek/Pobrane/opw3 firmware/extracted_images/kernel_with_symbols.elf
+• Binary Format             : ELF 64-bit LSB Executable (AArch64 ARM64, not stripped)
+• ELF Binary File Size      : 48.34 MB (50,688,135 bytes)
+• Recovered Symbol Count    : 141,777 unique kallsyms symbols
+• Computed Kernel Base      : 0xffffffc008000000
+• Kernel Architecture String: mod_unload modversions aarch64
+• Verification Status       : SUCCESS (Fully loadable into IDA Pro / Ghidra)
+
+2. DECOMPILED DEVICE TREE SOURCES (.dts)
+------------------------------------------------------------------------------------------
+No.  | DTS Filename           | Size       | Lines   | Model / Board Revision
+-----------------------------------------------------------------------------
+1    | monaco_base_soc.dts    |   281.8 KB | 10241 | Qualcomm Technologies, Inc. Monaco Watch
+2    | dtbo_overlay_00.dts    |   125.7 KB |  3391 | Qualcomm Technologies, Inc. Monaco Watch
+3    | dtbo_overlay_01.dts    |   125.7 KB |  3391 | Qualcomm Technologies, Inc. Monaco Watch
+4    | dtbo_overlay_02.dts    |   154.2 KB |  3533 | Qualcomm Technologies, Inc. Monaco Watch
+5    | dtbo_overlay_03.dts    |   154.2 KB |  3533 | Qualcomm Technologies, Inc. Monaco Watch
+6    | dtbo_overlay_04.dts    |   154.2 KB |  3533 | Qualcomm Technologies, Inc. Monaco Watch
+7    | dtbo_overlay_05.dts    |   154.2 KB |  3533 | Qualcomm Technologies, Inc. Monaco Watch
+8    | dtbo_overlay_06.dts    |   159.8 KB |  3676 | Qualcomm Technologies, Inc. Monaco Watch
+9    | dtbo_overlay_07.dts    |   159.8 KB |  3676 | Qualcomm Technologies, Inc. Monaco Watch
+10   | dtbo_overlay_08.dts    |   159.8 KB |  3676 | Qualcomm Technologies, Inc. Monaco Watch
+11   | dtbo_overlay_09.dts    |   159.8 KB |  3676 | Qualcomm Technologies, Inc. Monaco Watch
+-----------------------------------------------------------------------------
+Total Decompiled: 11 .dts files (1789.4 KB, 45,859 lines of code).
+Output Directory: extracted_images/device_tree/
+==========================================================================================
