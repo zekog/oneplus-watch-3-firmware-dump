@@ -1,0 +1,30 @@
+Found volume magic at 0x1000
+Firmware Volume: FFS2 attr 0x0003feff, rev 2, cksum 0xf2cc, size 0x40000 (262144 bytes)
+  Firmware Volume Blocks: (512, 0x200)
+  File 0: 9e21fd93-9c72-4c15-8c4b-e77f1db2d792 type 0x0b, attr 0x00, chsm 0xaa97, state 0x07, size 0x2b970 (178544 bytes), (firmware volume image)
+    Section 0: type 0x02, size 0x2b958 (178520 bytes) (Guid Defined section)
+      Guid-Defined: ee4e5898-3914-4259-9d6e-dc7bd79403cf offset= 0x18 attrs= 0x1 (PROCESSING_REQUIRED)
+        Section 0: type 0x19, size 0x4 (4 bytes) (Raw section)
+        Section 1: type 0x17, size 0x910c4 (594116 bytes) (Firmware volume image section)
+          Firmware Volume: FFS2 nameGuid 046fae99-cf2e-49ed-a6a8-a1488b7e80d3, attr 0x0003feff, rev 2, cksum 0xc124, size 0x910c0 (594112 bytes)
+            Firmware Volume Blocks: (9283, 0x40)
+            File 0: ffffffff-ffff-ffff-ffff-ffffffffffff type 0xf0, attr 0x00, chsm 0xaaf4, state 0x07, size 0x2c (44 bytes), (ffs padding)
+            File 1: f536d559-459f-48fa-8bbc-43b554ecae8d type 0x09, attr 0x00, chsm 0xaa6d, state 0x07, size 0x91038 (593976 bytes), (application)
+              Section 0: type 0x15, size 0x1c (28 bytes) (User interface name section)
+                Name: LinuxLoader
+              Section 1: type 0x10, size 0x91004 (593924 bytes) (PE32 image section)
+Dumping...
+Wrote: reports/uefi_extracted/abl/volume-4096.fv
+Wrote: reports/uefi_extracted/abl/volume-4096/filesystem.ffs
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/file.obj
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0.guid
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section0.raw
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1.fv
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf.fv
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/filesystem.ffs
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-ffffffff-ffff-ffff-ffff-ffffffffffff/file.obj
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f536d559-459f-48fa-8bbc-43b554ecae8d/file.obj
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f536d559-459f-48fa-8bbc-43b554ecae8d/section0.ui
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f536d559-459f-48fa-8bbc-43b554ecae8d/section1.pe
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/guided.preamble
+Wrote: reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/guided.certs

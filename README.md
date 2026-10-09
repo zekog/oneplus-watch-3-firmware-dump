@@ -74,6 +74,8 @@ Located in [`mcu_firmware/OPWWE251/`](mcu_firmware/OPWWE251/):
 
 ### 4. Technical Analysis Reports & Indexes
 Located in [`reports/`](reports/):
+* **[`reports/bootloader_analysis.md`](reports/bootloader_analysis.md):** In-depth analysis of Qualcomm bootloader binaries, XBL forced EDL conditions, TLMM configurations, and unbricking implications.
+* **[`reports/edl_recovery_notes.md`](reports/edl_recovery_notes.md):** Research notes on non-destructive software EDL entry vectors (VBUS low, failed boot counter) vs hardware test points.
 * **[`reports/vendor_dlkm_modules.csv`](reports/vendor_dlkm_modules.csv):** Detailed CSV index of all 137 vendor kernel modules with file sizes, symbol counts, and driver descriptions.
 * **[`reports/dts_hardware_map.md`](reports/dts_hardware_map.md):** Detailed peripheral mapping (touch, display, crown, PMIC, BES2610 interconnect).
 * **[`reports/kernel_driver_check.txt`](reports/kernel_driver_check.txt):** Audit report verifying GKI core symbols vs offloaded out-of-tree dynamic drivers.
@@ -81,6 +83,90 @@ Located in [`reports/`](reports/):
 * **[`firmware_report.txt`](firmware_report.txt):** Full index of 50 low-level Qualcomm firmware binaries (`.elf`, `.bin`, `.mbn`) and HAL services.
 * **[`decompilation_report.txt`](decompilation_report.txt):** Details of the kernel symbol extraction and DTB/DTBO decompilation.
 * **[`verification_report.txt`](verification_report.txt):** Verification and block counts of the unpacked OTA partitions.
+
+---
+
+## 🔐 Bootloader & EDL Analysis
+
+The `firmware-update/` directory contains all Qualcomm bootloader images for OPWWE251.
+
+### Bootloader Files
+
+| File | Size | Format | Description |
+|---|---|---|---|
+| `xbl.elf` | 2.8 MB | ELF | eXtended Boot Loader - contains forced EDL logic |
+| `abl.elf` | 263 KB | UEFI FV | Application Boot Loader (fastboot) |
+| `xbl_config.elf` | 24 KB | ELF | XBL configuration |
+| `devcfg_msm_ddr.mbn` | 38 KB | ELF | Device Config (TLMM/GPIO) |
+| `qupv3fw.elf` | 58 KB | ELF | QUP v3 firmware |
+| `rpm.mbn` | 244 KB | MBN | Resource Power Manager |
+| `hyp.mbn` | 354 KB | MBN | Hypervisor |
+| `tz.mbn` | 2.9 MB | MBN | TrustZone |
+| `keymint.mbn` | 326 KB | MBN | Key Management |
+| `imagefv.elf` | 16 KB | UEFI FV | Image Firmware Verification |
+| `uefi_sec.mbn` | 118 KB | MBN | UEFI Security verification module |
+| `apdp.mbn` | 12 KB | MBN | Application Primary Debug Policy |
+| `storsec.mbn` | 16 KB | MBN | Storage Security engine |
+| `multi_image.mbn` | 12 KB | MBN | Multi-image bootloader descriptor |
+| `NON-HLOS.bin` | 33 MB | - | Modem firmware |
+| `dspso.bin` | 64 MB | - | DSP firmware |
+| `dtbo.img` | 10 MB | DTBO | Device Tree Overlays |
+| `vbmeta.img` | 12 KB | VBMETA | Verified Boot Metadata |
+| `vbmeta_system.img` | 4 KB | VBMETA | System partition AVB 2.0 metadata |
+
+### Forced EDL Logic (from `xbl.elf`)
+
+XBL contains a built-in failsafe that automatically enters EDL when one of these conditions is met during boot:
+- `fedl, pmi_not_detected` - PMIC not detected
+- `fedl, vbus_det_err` - USB VBUS detection error
+- `fedl, vbus_low` - USB VBUS voltage too low
+- `fedl, chgr_type_det_err` - Charger type detection error
+- `fedl, chgr_det_timeout` - Charger detection timeout
+- `EDL: sbl1_dload_entry: dload_entry_count > 1` - Failed boot counter threshold
+
+### TLMM GPIO Configuration (from `devcfg_msm_ddr.mbn`)
+
+- `tlmm_gpio_test_pin` - test pin (numeric value in binary section)
+- `tlmm_total_gpio`, `tlmm_base`, `tlmm_offset`
+- `/tlmm/configs`
+
+### EDL Access Strategies (NO case opening)
+
+1. **Forced EDL via `vbus_low`** - software-based, safest
+2. **Failed boot counter** - requires power cycling during boot
+3. **TLMM test pin short** - hardware-based, DESTROYS WATER RESISTANCE
+
+### ⚠️ WARNING: Water Resistance
+
+OnePlus Watch 3 is rated **5ATM (50 meters water resistance)**. Opening the case to access physical PCB test points permanently destroys the water-resistant adhesive seal. Before flashing any boot-critical partition (`boot`, `init_boot`, `vendor_boot`, `dtbo`, `vbmeta`, `recovery`), be aware that there is currently no confirmed software-only method to recover from a brick.
+
+---
+
+## 🎛️ MCU Firmware (BES2610)
+
+The `mcu_firmware/OPWWE251/` directory contains firmware for the Bestechnic BES2610 coprocessor (Cortex-M55 based RTOS):
+
+* `OPWWE251_M55C0_2505201801.bin` (6.34 MB) - Core 0 main RTOS binary
+* `OPWWE251_M55C1_2505201801.bin` (5.57 MB) - Core 1 secondary RTOS binary
+* `OPWWE251_SSHUB_2505201801.bin` (980.1 KB) - Sensor Subsystem Hub (SSHUB) firmware
+* `bootloader.bin` (254.1 KB) - MCU bootloader binary
+* `programmer.bin` (68.9 KB) - MCU flashing/programmer routine
+* `config.txt` - Memory and peripheral configuration descriptors
+* `symbols.txt` - Firmware symbol mapping
+
+---
+
+## 📦 UEFI Firmware Volumes
+
+`abl.elf` and `imagefv.elf` are UEFI Firmware Volumes (signature `_FVH` / `FFS2`). Extracted contents are available in [`reports/uefi_extracted/`](reports/uefi_extracted/):
+
+* **`abl.elf` (LinuxLoader):**
+  * Extracted PE32 binary: `section1.pe` (593,924 bytes, PE32 image)
+  * Implements the Android Fastboot protocol, boot slot switching (`set_active _a` / `_b`), display panel selection, and `WriteRecoveryMessageEdl` recovery mechanism.
+* **`imagefv.elf` (Firmware UI):**
+  * Extracted splash bitmaps for bootloader recovery and diagnostics:
+    * `tsens_thermal_symbol.bmp` & `tsens_thermal_err_symbol.bmp` (Thermal warning indicators)
+    * `battery_symbol_DebugBoot.bmp` & `battery_symbol_DebugStay.bmp` (Battery debug indicators)
 
 ---
 
@@ -154,7 +240,7 @@ The `vendor_boot` ramdisk contains 212 modules required during early userspace i
 ### Prerequisites
 * Linux environment (Ubuntu / Debian / Arch Linux)
 * Python 3.10+
-* Required packages: `brotli`, `requests`, `vmlinux-to-elf`, `device-tree-compiler` (`dtc`), `7z`, `e2fsprogs` (`debugfs`), `binutils` (`nm`, `readelf`), `kmod` (`modinfo`).
+* Required packages: `brotli`, `requests`, `vmlinux-to-elf`, `device-tree-compiler` (`dtc`), `7z`, `e2fsprogs` (`debugfs`), `binutils` (`nm`, `readelf`), `kmod` (`modinfo`), `uefi-firmware-parser`.
 
 ### Execution
 ```bash

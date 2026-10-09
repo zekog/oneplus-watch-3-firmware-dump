@@ -1,0 +1,42 @@
+=== reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section0.raw ===
+=== reports/uefi_extracted/abl/volume-4096/file-9e21fd93-9c72-4c15-8c4b-e77f1db2d792/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f536d559-459f-48fa-8bbc-43b554ecae8d/section1.pe ===
+ reboot=w
+/work/iot_watch/jenkins/persistant_workspace/SW5100_R/OWWE251/sign_transition/source_code/android/kernel_platform/bootable/bootloader/edk2/MdePkg/Library/BaseLib/LinkedList.c
+Not enough memory to Allocate Fastboot Buffer
+Failed to reboot to recovery mode
+oem off-mode-charge
+qcom,oem-id
+%asystem_reboot_withoutreason
+set_active _a or _b should be entered
+Failed to reboot to fastboot mode
+boot-fastboot
+Fastboot Device disconnected
+couldnt init fastboot , exiting
+Rebooting the device into bootloader mode
+Launching fastboot
+Fastboot: Initializing...
+oem set-hw-fence-value
+oem set-gpu-preemption
+reboot
+No fastboot support for flashless chipsets, Infinte loop
+Failed to WriteRecoveryMessageEdl: %r
+Failed to free up fastboot buffer
+%asystem_reboot_withreason
+Error Allocate RX buffer, cannot enter fastboot mode
+ androidboot.mode=reboot
+Non Multi-slot: Unbootable entering fastboot mode
+Fastboot Buffer Size allocated: %ld
+Fastboot USB: Unable to free Tx Buffer
+Error Allocate TX buffer, cannot enter fastboot mode
+Fastboot: Couldn't disable watchdog timer: %r
+oem disable-charger-screen
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section0.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3e5584ed-05d4-4267-9048-0d47f76f4248/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-4753e815-ddd8-402d-bf69-9b8c4eb7573e/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-03ded53e-becd-428f-9f79-5aba64c58445/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-8b86cd38-c772-4fcf-85aa-345b2b3c1ab4/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3fd97907-93f1-4349-af3c-3b68b0a5e626/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-e2ea5a4f-98bd-4203-ab49-399505ddfb7d/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-c72fb1a9-5527-4e13-bac4-f671d0330145/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-b0f8d1be-5353-4812-b1f6-07e7768204cc/section1.raw ===
+=== reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f9e8f683-e065-4e09-b4f9-0230d7cecd08/section1.raw ===

@@ -1,0 +1,86 @@
+Found volume magic at 0x2000
+Firmware Volume: FFS2 attr 0x0003feff, rev 2, cksum 0xd4c0, size 0x2000 (8192 bytes)
+  Firmware Volume Blocks: (16, 0x200)
+  File 0: 072be68a-6ec0-b209-9b83-276f017ebeaa type 0x0b, attr 0x00, chsm 0xaac2, state 0x07, size 0x18f5 (6389 bytes), (firmware volume image)
+    Section 0: type 0x02, size 0x18dd (6365 bytes) (Guid Defined section)
+      Guid-Defined: ee4e5898-3914-4259-9d6e-dc7bd79403cf offset= 0x18 attrs= 0x1 (PROCESSING_REQUIRED)
+        Section 0: type 0x19, size 0x4 (4 bytes) (Raw section)
+        Section 1: type 0x17, size 0x477c4 (292804 bytes) (Firmware volume image section)
+          Firmware Volume: FFS2 nameGuid a8169396-d0f7-49cb-890a-25e1a9767406, attr 0x0003feff, rev 2, cksum 0x6c8d, size 0x477c0 (292800 bytes)
+            Firmware Volume Blocks: (4575, 0x40)
+            File 0: ffffffff-ffff-ffff-ffff-ffffffffffff type 0xf0, attr 0x00, chsm 0xaaf4, state 0x07, size 0x2c (44 bytes), (ffs padding)
+            File 1: 3e5584ed-05d4-4267-9048-0d47f76f4248 type 0x02, attr 0x00, chsm 0xaa1e, state 0x07, size 0xcc72 (52338 bytes), (freeform)
+              Section 0: type 0x15, size 0x36 (54 bytes) (User interface name section)
+                Name: battery_symbol_Soc10.bmp
+              Section 1: type 0x19, size 0xcc22 (52258 bytes) (Raw section)
+            File 2: 4753e815-ddd8-402d-bf69-9b8c4eb7573e type 0x02, attr 0x00, chsm 0xaa71, state 0x07, size 0x2dbe (11710 bytes), (freeform)
+              Section 0: type 0x15, size 0x3e (62 bytes) (User interface name section)
+                Name: battery_symbol_NoBattery.bmp
+              Section 1: type 0x19, size 0x2d66 (11622 bytes) (Raw section)
+            File 3: 03ded53e-becd-428f-9f79-5aba64c58445 type 0x02, attr 0x00, chsm 0xaad7, state 0x07, size 0x2396 (9110 bytes), (freeform)
+              Section 0: type 0x15, size 0x3e (62 bytes) (User interface name section)
+                Name: battery_symbol_Nocharger.bmp
+              Section 1: type 0x19, size 0x233e (9022 bytes) (Raw section)
+            File 4: 8b86cd38-c772-4fcf-85aa-345b2b3c1ab4 type 0x02, attr 0x00, chsm 0xaad5, state 0x07, size 0x23a6 (9126 bytes), (freeform)
+              Section 0: type 0x15, size 0x50 (80 bytes) (User interface name section)
+                Name: battery_symbol_LowBatteryCharging.bmp
+              Section 1: type 0x19, size 0x233e (9022 bytes) (Raw section)
+            File 5: 3fd97907-93f1-4349-af3c-3b68b0a5e626 type 0x02, attr 0x00, chsm 0xaaae, state 0x07, size 0x2396 (9110 bytes), (freeform)
+              Section 0: type 0x15, size 0x40 (64 bytes) (User interface name section)
+                Name: battery_symbol_LowBattery.bmp
+              Section 1: type 0x19, size 0x233e (9022 bytes) (Raw section)
+            File 6: e2ea5a4f-98bd-4203-ab49-399505ddfb7d type 0x02, attr 0x00, chsm 0xaab2, state 0x07, size 0x10e12 (69138 bytes), (freeform)
+              Section 0: type 0x15, size 0x36 (54 bytes) (User interface name section)
+                Name: tsens_thermal_symbol.bmp
+              Section 1: type 0x19, size 0x10dc2 (69058 bytes) (Raw section)
+            File 7: c72fb1a9-5527-4e13-bac4-f671d0330145 type 0x02, attr 0x00, chsm 0xaa7a, state 0x07, size 0x10e1a (69146 bytes), (freeform)
+              Section 0: type 0x15, size 0x3e (62 bytes) (User interface name section)
+                Name: tsens_thermal_err_symbol.bmp
+              Section 1: type 0x19, size 0x10dc2 (69058 bytes) (Raw section)
+            File 8: b0f8d1be-5353-4812-b1f6-07e7768204cc type 0x02, attr 0x00, chsm 0xaa6f, state 0x07, size 0xd12a (53546 bytes), (freeform)
+              Section 0: type 0x15, size 0x3e (62 bytes) (User interface name section)
+                Name: battery_symbol_DebugBoot.bmp
+              Section 1: type 0x19, size 0xd0d2 (53458 bytes) (Raw section)
+            File 9: f9e8f683-e065-4e09-b4f9-0230d7cecd08 type 0x02, attr 0x00, chsm 0xaac9, state 0x07, size 0x24c2 (9410 bytes), (freeform)
+              Section 0: type 0x15, size 0x3e (62 bytes) (User interface name section)
+                Name: battery_symbol_DebugStay.bmp
+              Section 1: type 0x19, size 0x246a (9322 bytes) (Raw section)
+Dumping...
+Wrote: reports/uefi_extracted/imagefv/volume-8192.fv
+Wrote: reports/uefi_extracted/imagefv/volume-8192/filesystem.ffs
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0.guid
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section0.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1.fv
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf.fv
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/filesystem.ffs
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-ffffffff-ffff-ffff-ffff-ffffffffffff/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3e5584ed-05d4-4267-9048-0d47f76f4248/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3e5584ed-05d4-4267-9048-0d47f76f4248/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3e5584ed-05d4-4267-9048-0d47f76f4248/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-4753e815-ddd8-402d-bf69-9b8c4eb7573e/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-4753e815-ddd8-402d-bf69-9b8c4eb7573e/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-4753e815-ddd8-402d-bf69-9b8c4eb7573e/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-03ded53e-becd-428f-9f79-5aba64c58445/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-03ded53e-becd-428f-9f79-5aba64c58445/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-03ded53e-becd-428f-9f79-5aba64c58445/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-8b86cd38-c772-4fcf-85aa-345b2b3c1ab4/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-8b86cd38-c772-4fcf-85aa-345b2b3c1ab4/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-8b86cd38-c772-4fcf-85aa-345b2b3c1ab4/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3fd97907-93f1-4349-af3c-3b68b0a5e626/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3fd97907-93f1-4349-af3c-3b68b0a5e626/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-3fd97907-93f1-4349-af3c-3b68b0a5e626/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-e2ea5a4f-98bd-4203-ab49-399505ddfb7d/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-e2ea5a4f-98bd-4203-ab49-399505ddfb7d/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-e2ea5a4f-98bd-4203-ab49-399505ddfb7d/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-c72fb1a9-5527-4e13-bac4-f671d0330145/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-c72fb1a9-5527-4e13-bac4-f671d0330145/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-c72fb1a9-5527-4e13-bac4-f671d0330145/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-b0f8d1be-5353-4812-b1f6-07e7768204cc/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-b0f8d1be-5353-4812-b1f6-07e7768204cc/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-b0f8d1be-5353-4812-b1f6-07e7768204cc/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f9e8f683-e065-4e09-b4f9-0230d7cecd08/file.obj
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f9e8f683-e065-4e09-b4f9-0230d7cecd08/section0.ui
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/section1/volume-ee4e5898-3914-4259-9d6e-dc7bd79403cf/file-f9e8f683-e065-4e09-b4f9-0230d7cecd08/section1.raw
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/guided.preamble
+Wrote: reports/uefi_extracted/imagefv/volume-8192/file-072be68a-6ec0-b209-9b83-276f017ebeaa/section0/guided.certs

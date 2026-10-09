@@ -7,7 +7,7 @@ Script for analyzing extracted partition images (vendor.img, system.img, init_bo
 3. Identifies libraries (.so) and services in /vendor/bin/hw/ responsible for:
    - Sensors and health tracking,
    - Power and thermal management,
-   - Communication with the RTOS co-processor (Bestechnic BES2800 / BES2700 Cortex-M55).
+   - Communication with the RTOS co-processor (Bestechnic BES2610 Cortex-M55).
 4. Uses magiskboot to unpack init_boot.img and boot.img (GKI kernel).
 5. Generates a comprehensive technical report in firmware_report.txt.
 """
@@ -293,7 +293,7 @@ def generate_report(output_file: Path, firmware_list: list, hal_data: dict, kern
     lines.append("-" * w)
     lines.append("• Device Model      : OnePlus Watch 3 (OPWWE251)")
     lines.append("• Primary SoC (AP)  : Qualcomm Snapdragon W5+ Gen 1 (codename 'monaco', SW5100 / SDA5100)")
-    lines.append("• RTOS Co-processor : Bestechnic BES2800 / BES2700 (Dual-core Cortex-M55 + HiFi4 DSP / SSHUB)")
+    lines.append("• RTOS Co-processor : Bestechnic BES2610 (Dual-core Cortex-M55 + HiFi4 DSP / SSHUB)")
     lines.append("• OS Version        : Android 14 (Wear OS 4 / 5) - boot image header v4 (GKI)")
     lines.append("• Userspace ABI     : ARM 32-bit (armeabi-v7a) with ARM64 Linux Kernel")
     lines.append("")
@@ -349,7 +349,7 @@ def generate_report(output_file: Path, firmware_list: list, hal_data: dict, kern
     lines.append("")
 
     # 3c. RTOS Co-processor Communication
-    lines.append("[C] RTOS CO-PROCESSOR COMMUNICATION (BESTECHNIC BES2800 / BES2700):")
+    lines.append("[C] RTOS CO-PROCESSOR COMMUNICATION (BESTECHNIC BES2610):")
     lines.append("  Primary IPC Service (/vendor/bin/hw/):")
     for s in hal_data["rtos"]["services"]:
         lines.append(f"    - {s['path']} ({s['size_bytes']:,} B)")

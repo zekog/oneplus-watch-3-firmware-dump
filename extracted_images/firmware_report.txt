@@ -6,7 +6,7 @@
 --------------------------------------------------------------------------------
 • Device Model      : OnePlus Watch 3 (OPWWE251)
 • Primary SoC (AP)  : Qualcomm Snapdragon W5+ Gen 1 (codename 'monaco', SW5100 / SDA5100)
-• RTOS Co-processor : Bestechnic BES2800 / BES2700 (Dual-core Cortex-M55 + HiFi4 DSP / SSHUB)
+• RTOS Co-processor : Bestechnic BES2610 (Dual-core Cortex-M55 + HiFi4 DSP / SSHUB)
 • OS Version        : Android 14 (Wear OS 4 / 5) - boot image header v4 (GKI)
 • Userspace ABI     : ARM 32-bit (armeabi-v7a) with ARM64 Linux Kernel
 
@@ -93,7 +93,7 @@ Magiskboot Unpack Results:
     - /vendor/etc/init/vendor.google_clockwork.healthservices@2-service.rc
     - /vendor/etc/init/vendor.qti.hardware.powerstateservice@1.0-service.rc
 
-[C] RTOS CO-PROCESSOR COMMUNICATION (BESTECHNIC BES2800 / BES2700):
+[C] RTOS CO-PROCESSOR COMMUNICATION (BESTECHNIC BES2610):
   Primary IPC Service (/vendor/bin/hw/):
     - /vendor/bin/hw/bg_peekpoke (7,560 B)
       -> Low-level background processor register peek/poke utility

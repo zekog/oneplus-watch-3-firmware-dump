@@ -1,0 +1,7 @@
+("General OPPO ${project} attestation CA"1
+"OPPO Attestation CA" 0
+"OPPO Attestation CA" 0v0
+"QSEE Attestation Root CA 4 SubCA 10
+"QSEE Attestation Root CA 4 SubCA 10v0
+QSEE Attestation Root CA 40
+QSEE Attestation Root CA 40v0

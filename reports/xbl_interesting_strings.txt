@@ -1,0 +1,279 @@
+ CDP_CHARGER
+ DCP_CHARGER
+## Default app to boot in platform BDS init
+## Dynamic UART Log Buffer Size
+ Failed to configure ATH_A2S_GPIO 
+ FLOAT_CHARGER
+# Force booting to shell whilst in pre-silicon phase
+# Initialize Display panel in its own thread to run in parallel to booting
+# Keep the following number of cores active, including the boot core
+ OCP_CHARGER
+# Required for DDRInfoTest
+## SDHC Mode 0:Legacy Mode, Non-zero: SDHC Mode ##
+ SDP_CHARGER
+# SecBootEnableFlag = 0x1               i.e. 0b00000001
+$+2@Nicbcfg_info
+0x00500000, 0x00300000, "TLMM_REG",           AddDev, MMAP_IO, UNCACHEABLE, MmIO,   NS_DEVICE
+0x01B50000, 0x00010000, "PRNG_CFG_PRNG",      AddDev, MMAP_IO, UNCACHEABLE, MmIO,   NS_DEVICE
+0x01C00000, 0x02800000, "PMIC ARB SPMI",      AddDev, MMAP_IO, UNCACHEABLE, MmIO,   NS_DEVICE
+0x45E00000, 0x00100000, "Boot Info",         AddMem, MEM_RES, SYS_MEM_CAP, BsData, WRITE_BACK_XN
+0x5FA00000, 0x00200000, "ABOOT FV",          AddMem, SYS_MEM, SYS_MEM_CAP, Reserv, WRITE_BACK
+1@XTesting DDR Read/Write.
+ABCDEFGHIJKLMNPMIC
+allnetcmcctest
+allnetcttest
+allnetcutest
+AuxBootStrap_%d
+BGCOM Err: DAL_DeviceAttach with DALDEVICEID_TLMM failed with err=%d.
+BGCOM Err: DalTlmm_ConfigGpio failed with err=%d.
+BGCOM Err: DalTlmm_GpioOut failed with err=%d.
+BGCOM Err: h_bgcom_tlmm_handle is NULL
+BGCOM Err: This client didnt enable secmode to disable. handle: 0x%x
+BGCOM Fatal: bgcom_gpio_init failed! err=%d
+BGCOM Fatal: bgcom_gpio_init(TZ_NS) failed! err=%d
+BGCOM Fatal: bgcom_gpio_out failed! err=%d
+BGCOM Fatal: bgcom_gpio_out failed while deinit! err=%d
+Boot Config
+Boot Device : eMMC
+Boot Device : NVME
+Boot Device : SDC
+Boot Device : SPI
+Boot Device : UFS
+Boot Interface: 
+Boot up PwrKey press %d ms detected is less than expected %d ms duration. Shutting down device. Release_time %d, Press_time %d 
+bootable_media_detect_timestamp
+boot_apt_test
+boot_authenticator.c
+boot_cache_set_memory_barrier
+boot_clock_init_rpm
+boot_clock_init_rpm End, Delta
+boot_clock_init_rpm Start
+boot_config.c
+boot_config_data.c
+boot_config_data_table_default_init
+boot_config_data_table_default_init End, Delta
+boot_config_data_table_default_init, Start
+boot_config_data_table_init
+boot_config_flash.c
+boot_ddr_info.c
+boot_ddr_post_setup End, Delta
+boot_ddr_post_setup Start
+BootDisplay.c
+boot_dload.c
+boot_dload_check
+boot_dload_debug_target.c
+boot_dload_dump.c
+boot_dload_dump_security_regions
+boot_dload_handle_forced_dload_timeout
+boot_elf_loader.c
+boot_error_handler: Flashless boot. Going for hard reset
+boot_error_handler: Ramdump allowed. Trying to enter DLOAD
+boot_error_handler.c
+boot_extern_clk_interface.c
+boot_extern_ddr_interface.c
+boot_extern_pimem_interface.c
+boot_extern_ramdump_interface.c
+boot_extern_vsense_interface.c
+boot_flash_dev_if.c
+boot_flash_dev_sdcc
+boot_flash_dev_sdcc.c
+boot_flash_dev_sdcc_if.c
+boot_flash_init
+boot_flash_target.c
+boot_flash_trans_read head fail!
+boot_flash_trans_sdcc
+boot_flash_trans_sdcc.c
+boot_flash_trans_sdcc_factory
+boot_hash_buffer.c
+boot_hash.c
+boot_images
+boot_init_for_dload
+bootlog
+boot_logger.c
+boot_logger_ram.c
+boot_logger_timer.c
+boot_logger_uart.c
+boot_log_ram_to_storage dev_sdcc_write_bytes fail!
+boot_mc.c
+boot_oda_status_init
+boot_oda_status_init End, Delta
+boot_oda_status_init, Start
+boot_page_table.c
+boot_pbl_v2.c
+boot_populate_ddr_details_shared_table
+boot_populate_ram_partition_table
+boot_qusb_dci_eud_phy_tune End, Delta
+boot_qusb_dci_eud_phy_tune Start
+boot_ram_partition.c
+boot_raw_partition_ramdump.c
+boot_sdcc_coldplug.c
+boot_sd_ramdump.c
+boot_share_flash_data
+boot_smem_alloc_for_minidump
+boot_smem.c
+boot_smem_debug_init
+boot_smem_get_oda_status
+boot_smem_get_oda_status End, Delta
+boot_smem_get_oda_status, Start
+boot_smem_init
+boot_smem_init_oppo_gcdt start!
+boot_smem_init_oppo_ocdt
+boot_smem_quickboot_init End, Delta
+boot_smem_quickboot_init Start
+boot_smem_store_pon_status
+bootstrap
+BOOT_TEMP_CHECK_BSP
+boot_thermal_management.c
+Bootup frequency set to sw_override frequency %u
+Bootup frequency set to %u
+Bootup: No Charging support on RUMI Target
+Bootup: No PMIC on RUMI Target
+boot_update_eud_serial_number, Delta
+boot_update_eud_serial_number, Start
+boot_vsense_copy_to_smem
+Bu/pmic_settings.bin
+Charger port type: %s
+chnl_cfg select PM_PROP_SPMI_CHANNEL_CFG1
+/core/pmic/adc
+/core/power/boot_temp_check
+Could not locate "DXE Heap" in CFG
+Could not NumCpus uefiplat.cfg Defaulting to 8 cores , Status = (0x%x)
+dalspinlock
+DCC CFG region
+DCC_CFG.BIN
+/DEBUG/
+\DEBUG\
+DEBUG ASSERT FAILED at (%s:%d): %s
+Debug event
+DebugLib.c
+DefaultBDSBootApp = "LinuxLoader"
+DefaultChargerApp = "QcomChargerApp"
+devcfg init
+/devcfg.bin
+DevCfgVersionInfo
+/dev/icbcfg/boot
+DloadCookieAddr
+DloadCookieAddr = 0x003D3000 
+DloadCookieAddr not found in uefiplat.cfg
+DloadCookieValue
+DloadCookieValue = 0x10
+DloadCookieValue not found in uefiplat.cfg
+DS_PMIC_CRASH ---BOOT_HARD_RESET_TYPE
+DS_PMIC_CRASH ---BOOT_WARM_RESET_TYPE
+EDL: sbl1_dload_entry: dload_entry_count > 1
+EDLCookieAddr
+EMERGENCY_DLOAD_TIMEOUT_COOKIE_SET: Reset
+EnableUefiSecAppDebugLogDump = 0x0
+enter forced EDL
+--Entered-QuickBoot-Loader--
+Error Allocating buffer for UART log 
+ERROR: Failed to Get Shared Imem Boot Device type 
+ERROR: Failed to set DLOAD cookie
+ERROR: Spinlock Cache line expectation not met for 2 locks, will result into problem
+ERROR: UEFI FD region not present in cfg file !
+--Exiting-QuickBoot-Loader--
+Failed LoadAndParsePlatformCfg
+fedl, chgr_det_timeout
+fedl, chgr_type_det_err
+fedl, pmi_not_detected
+fedl, vbus_det_err
+fedl, vbus_low
+Float charger
+("General OPPO ${project} attestation CA"1
+GetPmicOcp failed!
+HALT: spinning forever... (reason = %d)
+hs_phy_cfg
+hs_phy_cfg_size
+icbcfg_info
+InitSharedLibs failed
+Invalid secondary cpu num %d, SMP_MAX_CPUS %d, secondary_bootstrap_thread_count %d
+JTAG ID
+lNOKcFg
+Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
+MD_PMIC_PON.BIN
+MinidumpTALoadingCfg = 0x0
+	Mode: %c%c%c%c
+No mapping
+OCP Occured: PMIC: %d; BOB: %d ; Status: 0x%x
+OCP Occured: PMIC: %d; LDO: %d; Status:0x%x
+OCP Occured: PMIC: %d; SMPS: %d; Status:0x%x
+"OPPO Attestation CA" 0
+"OPPO Attestation CA" 0v0
+OverRideSharedImemBootCfg
+PCB_GPIO
+PlatConfigFileName = "uefiplatLA.cfg"
+PMIC:  Initialization failed hProp_target handle retrieval!
+PMIC crashed during deepsleep
+pmic DevPrg init
+Pmic PON stat
+pmic XBL init
+PmicOcp :%d, %d, %c
+PMIC_PON.BIN
+/pmic/target
+PMIC_THERM
+PROD Mode   : TRUE
+QC_IMAGE_VERSION_STRING=BOOT.XF.4.3-00257-ATHERTONLAZ-1
+Recursive exception occurred while dumping the CPU state
+#Refer to boot_images/QcomPkg/Docs/UefiLogBufferSizeConfigReadme.txt for usage.
+sbl1_hw_dload_init
+sbl1_set_gpio_a2s_status
+sbl1_tlmm_init
+sbl1_tlmm_init End, Delta
+sbl1_tlmm_init Start
+Sdc1GpioConfigOff = 0xA00
+Sdc1GpioConfigOn = 0x1E92
+Sdc2GpioConfigOff = 0xA00
+Sdc2GpioConfigOn = 0x1E92
+Secure Boot: 
+SMEM base addr=0x%08X, size=%d memory mapping failed.
+SMEM is not initialized by Boot.
+SMEM Target info addr=0x%08X memory mapping failed.
+smem_boot.c
+smem_boot_setup_toc: TOC too big! Size: %d Bytes, must be %d or less.
+spin_lock_held(&thread_lock)
+	state %s, curr_cpu %d, pinned_cpu %d, priority %d, remaining quantum %d
+sys_boot
+TESTED
+Testing DDR Clock Switching: Enter DDR Clock Switch.
+Testing DDR Clock Switching: Exiting DDR Clock Switch.
+Testing DDR Deep Power Down.
+Testing DDR Deep Power Down: Entering deep power down.
+Testing DDR Deep Power Down: Exiting deep power down.
+Testing DDR Deep Power Down: In deep power down.
+Testing DDR Read/Write: Address lines.
+Testing DDR Read/Write: Data lines.
+Testing DDR Read/Write: Own-address algorithm.
+Testing DDR Read/Write: Walking-ones algorithm.
+Testing DDR Self Refresh.
+Testing DDR Self Refresh: Entering self refresh.
+Testing DDR Self Refresh: Exiting self refresh.
+Testing DDR Self Refresh: In self refresh.
+Testing DDR Self Refresh: Read pass.
+Testing DDR Self Refresh: Write pass.
+test_time_conversion_check_result
+tlmm_sleep
+t->state == THREAD_SLEEPING
+UART Buffer size set to 0x%x 
+UARTLogBufferSize
+#UARTLogBufferSize = 0x19000       
+uefiplat.cfg
+UefiPlatCfg.c
+UfsSmmuConfigForOtherBootDev = 1
+Unable to determine boot device ...
+Unable to register Pwr transition notification for UART
+usb_shared_hs_phy_init: get hs phy cfg Failed
+usb_shared_hs_phy_init: get hs phy cfg size Failed
+usb_shared_hs_phy_init: hs phy cfg size
+VBUS High!
+VBUS Low
+/work/iot_watch/jenkins/persistant_workspace/SW5100_R/OWWE251/sign_transition/source_code/amss/BOOT.XF.4.3/boot_images/Build/AthertonLAB/Core/RELEASE_CLANG100LINUX/AARCH64/QcomPkg/XBLCore/XBLCore/DEBUG/Sec.dll
+&XBL Sec Attestation Root CA 4 Sub CA 10
+&XBL Sec Attestation Root CA 4 Sub CA 10v0
+XBL Sec Attestation Root CA 40
+XBL Sec Attestation Root CA 40v0
+*XBLLoader*boot_images/Build/AthertonLAB/Dll/RELEASE/XBLLoader.dll
+*XBLRamDump*boot_images/Build/AthertonLAB/Dll/RELEASE/XBLRamDump.dll
+XBLRamDumpMCUPowerDown:error at GPIO_Attach
+XBLRamDumpMCUPowerDown:error at GPIO_ConfigPin
+XBLRamDumpMCUPowerDown:error at GPIO_RegisterPinExplicit
+XBLRamDumpMCUPowerDown:error at GPIO_WritePin

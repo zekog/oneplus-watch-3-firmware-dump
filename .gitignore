@@ -16,10 +16,14 @@ extracted_images/init_boot_dump/
 extracted_images/vendor_boot_dump/
 extracted_images/temp_vendor_boot/
 
-# Exclude raw OTA firmware packages
+# Exclude raw OTA firmware packages and heavy partition blobs
 firmware/
-firmware-update/
 META-INF/
+firmware-update/dspso.bin
+firmware-update/NON-HLOS.bin
+firmware-update/static_nvbk.bin
+firmware-update/dtbo.img
+oneplus_watch_3_OPWWE251_firmware_dump.zip
 
 # Exclude raw kernel binary (kernel_with_symbols.elf is kept)
 extracted_images/kernel

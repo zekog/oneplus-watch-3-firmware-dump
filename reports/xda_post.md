@@ -56,12 +56,39 @@ All kernel drivers are dynamic GKI modules extracted directly from `vendor_dlkm.
 
 ---
 
+### 🔐 Bootloader & EDL Analysis (Update)
+
+I've also analyzed the bootloader files from `firmware-update/`:
+
+**XBL contains forced EDL logic:**
+- `enter forced EDL` string confirmed in `xbl.elf`
+- Conditions: PMIC not detected, VBUS error/low (`fedl, vbus_low`), charger detection failure
+- Failed boot counter (`dload_entry_count > 1`) also triggers EDL
+- Memory cookies: `DloadCookieAddr = 0x003D3000`, `DloadCookieValue = 0x10`
+
+**devcfg contains TLMM GPIO config:**
+- `tlmm_gpio_test_pin` key found in `devcfg_msm_ddr.mbn`
+- Numeric pin value is in binary section (Ghidra analysis needed)
+
+**UEFI Volume Extraction (`abl.elf` & `imagefv.elf`):**
+- Extracted `LinuxLoader` PE32 (`section1.pe`, 593 KB) which implements Fastboot and contains `WriteRecoveryMessageEdl`
+- Extracted boot splash recovery diagnostic bitmaps from `imagefv.elf`
+
+**Important warning for modders:**
+OnePlus Watch 3 is rated 5ATM (water-resistant). Opening the case to access test points destroys water resistance permanently. Currently there is no confirmed software-only method to unbrick this watch if a boot-critical partition gets corrupted. Proceed with caution when flashing `boot`, `init_boot`, `vendor_boot`, `dtbo`, or `vbmeta`.
+
+Full bootloader analysis available in `reports/bootloader_analysis.md` and recovery strategies in `reports/edl_recovery_notes.md`.
+
+---
+
 ### 📂 GitHub Repository & Reports
 
 The source repository with all DTS files, reconstructed ELF, CSV module indexes, and extraction scripts is hosted at:
 🔗 **GitHub:** [https://github.com/zekog/oneplus-watch-3-firmware-dump](https://github.com/zekog/oneplus-watch-3-firmware-dump)
 
 **Generated Reports Available in Repo:**
+* `reports/bootloader_analysis.md`: Complete Qualcomm bootloader inventory and EDL analysis.
+* `reports/edl_recovery_notes.md`: Non-destructive EDL entry vectors and recovery notes.
 * `reports/vendor_dlkm_modules.csv`: Full list of all 137 modules with sizes, symbol counts, and driver descriptions.
 * `reports/dts_hardware_map.md`: Complete pinout, compatible strings, and peripheral map.
 * `reports/kernel_driver_check.txt`: Audit of GKI kernel symbols vs out-of-tree dynamic drivers.
