@@ -80,7 +80,6 @@ Located in [`reports/`](reports/):
 * **[`reports/vendor_dlkm_modules.csv`](reports/vendor_dlkm_modules.csv):** Detailed CSV index of all 137 vendor kernel modules with file sizes, symbol counts, and driver descriptions.
 * **[`reports/dts_hardware_map.md`](reports/dts_hardware_map.md):** Detailed peripheral mapping (touch, display, crown, PMIC, BES2610 interconnect).
 * **[`reports/kernel_driver_check.txt`](reports/kernel_driver_check.txt):** Audit report verifying GKI core symbols vs offloaded out-of-tree dynamic drivers.
-* **[`reports/xda_post.md`](reports/xda_post.md):** Complete developer release post formatted for XDA Developers.
 * **[`firmware_report.txt`](firmware_report.txt):** Full index of 50 low-level Qualcomm firmware binaries (`.elf`, `.bin`, `.mbn`) and HAL services.
 * **[`decompilation_report.txt`](decompilation_report.txt):** Details of the kernel symbol extraction and DTB/DTBO decompilation.
 * **[`verification_report.txt`](verification_report.txt):** Verification and block counts of the unpacked OTA partitions.
