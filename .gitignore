@@ -30,6 +30,12 @@ __pycache__/
 *.part
 *.tmp
 
+# Archive files
+*.zip
+*.7z
+*.tar.gz
+*.tar.xz
+
 # Ensure target artifacts are preserved
 !extracted_images/device_tree/
 !extracted_images/device_tree/*
