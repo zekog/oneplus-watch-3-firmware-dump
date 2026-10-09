@@ -15,6 +15,10 @@ extracted_images/boot_dump/
 extracted_images/init_boot_dump/
 extracted_images/vendor_boot_dump/
 extracted_images/temp_vendor_boot/
+extracted_images/*_extracted/
+reports/*_decompiled/
+logdump_extracted/
+logfs_extracted/
 
 # Exclude raw OTA firmware packages and heavy partition blobs
 firmware/

@@ -29,8 +29,8 @@ Through detailed analysis of the decompiled Device Tree Sources (`device_tree/`)
 * **Display & Graphics:**
   * **Qualcomm MSM DRM** (`msm_drm.ko`) & Adreno GPU driver (`msm_kgsl.ko`)
   * Panels: **Chipone ICNA3311** 1.43" AMOLED (466x466) & **FocalTech FT2390** 1.502" AMOLED via MIPI DSI Command Mode.
-* **Health & PPG Sensor:**
-  * **PixArt PMW5100 / PM5100 SPMI** (`pmw5100-spmi_dlkm.ko`, compatible `qcom,pm5100-spmi`), optical PPG front-end for heart rate, SpO2, and biometric measurements.
+* **Power Management & Biometric Subsystems:**
+  * **Qualcomm PM5100 SPMI** (`pmw5100-spmi_dlkm.ko`, compatible `qcom,pm5100-spmi`): Qualcomm PMIC power management and VADC interface (*corrected from earlier PixArt misidentification*). Optical PPG and biometric acquisition is driven autonomously by the BES2610 RTOS co-processor.
 * **Rotary Crown (Encoder):**
   * Driven by `oplus_crown.ko` with dual-sourced optical motion tracking sensors:
     * **Mixosense MOT6010** (`mixosense,mot6010` on I2C address `0x74`, default active)
@@ -74,6 +74,9 @@ Located in [`mcu_firmware/OPWWE251/`](mcu_firmware/OPWWE251/):
 
 ### 4. Technical Analysis Reports & Indexes
 Located in [`reports/`](reports/):
+* **[`reports/hardware_architecture.md`](reports/hardware_architecture.md):** Deep architectural report on the 4-processor design (Snapdragon W5+, BES2610, SSHUB, Slate).
+* **[`reports/rtos_analysis.md`](reports/rtos_analysis.md):** Comprehensive analysis of Bestechnic BES2610 RTOS firmware, health algorithms, bootloader, and 64 MCU commands.
+* **[`reports/engineer_mode/`](reports/engineer_mode/):** Complete documentation of Engineer Mode (`HeyEngineerModeHuaQin`), 78 secret codes, HAL APIs, and write-protect flows.
 * **[`reports/edl_confirmation.md`](reports/edl_confirmation.md):** Empirical verification of software EDL access, USB VID:PID enumeration, and auto-timeout.
 * **[`reports/bootloader_analysis.md`](reports/bootloader_analysis.md):** In-depth analysis of Qualcomm bootloader binaries, XBL forced EDL conditions, TLMM configurations, and unbricking implications.
 * **[`reports/edl_recovery_notes.md`](reports/edl_recovery_notes.md):** Research notes on non-destructive software EDL entry vectors (VBUS low, failed boot counter) vs hardware test points.
@@ -216,6 +219,82 @@ The `mcu_firmware/OPWWE251/` directory contains firmware for the Bestechnic BES2
 * `programmer.bin` (68.9 KB) - MCU flashing/programmer routine
 * `config.txt` - Memory and peripheral configuration descriptors
 * `symbols.txt` - Firmware symbol mapping
+
+---
+
+## 🏗️ Hardware Architecture (4-Processor Design)
+
+Detailed analysis reveals that the OnePlus Watch 3 is powered by an advanced 4-processor heterogeneous system:
+
+1. **Qualcomm Snapdragon W5+ Gen 1 (monaco / SW5100):** Primary Application Processor (AP) running Wear OS 14 on Linux 5.15 GKI. Handles heavy compute, UI, voice, and user applications.
+2. **Bestechnic BES2610:** Dual Cortex-M55 co-processor handling Wi-Fi 6 (802.11ax), Bluetooth 5.x, and low-power RTOS tasks when the AP sleeps.
+3. **Sensor Sub-Hub (SSHUB):** Real-time sensor processing core handling 24/7 continuous optical PPG biometrics, 6-axis IMU (`icm42631` / `lsm6dso`), skin temperature, and rotary crown input.
+4. **Slate Co-Processor:** Dedicated display controller driving the AMOLED panel during Always-On Display (AOD) ambient mode via `slate_events_bridge_rpmsg.ko`.
+
+See [`reports/hardware_architecture.md`](reports/hardware_architecture.md) for complete bus diagrams, kernel bindings, and IPC protocols.
+
+---
+
+## 🛠️ Engineer Mode (Service Menu)
+
+The firmware includes a factory engineering suite (`HeyEngineerModeHuaQin.apk`) equipped with diagnostic menus, hardware calibration, RF controls, and MCU flashing endpoints:
+
+- **Full Documentation & Secret Codes:** Complete documentation, including all 77/78 dialer codes, is available in [`reports/engineer_mode/`](reports/engineer_mode/).
+- **Notable Codes:**
+  - `*#8020#`: Wireless ADB toggle (`WifiAdbHelper`).
+  - `*#9434#`: Secrecy authorization panel (ADB / Log / App decryption).
+  - `*#649010#`: Qualcomm USB Diag port enable (`DiagEnabled`).
+  - `*#3644321#`: Disable partition write protection & enter `reboot_eng`.
+  - `*#3644999#`: Re-enable partition write protection & reset ATM mode.
+- **⚠️ Safety Warnings:**
+  - `*#8778#` (`MasterClear`): **CRITICAL DANGER** — Immediately initiates an unprompted factory data reset.
+  - `*#*#700#` (`McuUpgradeActivity`): **CRITICAL DANGER** — Direct flash interface for the BES2610 NOR flash. An interrupted flash bricks the co-processor.
+- **Access Restrictions:** All sensitive components have `android:exported="false"`, meaning ADB shell (`uid=2000`) cannot trigger them directly without root/system privileges.
+
+---
+
+## 🧠 RTOS Analysis (BES2610)
+
+The co-processor runs an RTOS across three dedicated cores (`M55C0`, `M55C1`, `SSHUB`):
+- **Health & Biometrics:** Runs autonomous PPG filtering, AFib detection, skin temperature tracking, and pedometer counting without waking the Snapdragon AP.
+- **Autonomous GPS:** Offloads GNSS location tracking during workouts via `gps_gnss_service_sensor_send_m55_msg`.
+- **Command Protocol:** Supports a framed binary protocol of 64 host/MCU commands (`reports/mcu_protocol/mcu_commands.txt`).
+- **NOR Flash Bootloader:** Includes an on-board bootloader (`bootloader.bin`) and programmer (`programmer.bin`) supporting sector erase, page burn, and hardware pin recovery (`upg_mode_pin`).
+
+See [`reports/rtos_analysis.md`](reports/rtos_analysis.md) for full protocol tables and reverse engineering details.
+
+---
+
+## 🩺 Health Features
+
+Biometric tracking on the OnePlus Watch 3 is executed entirely at the RTOS level:
+- **Optical PPG (Heart Rate & SpO2):** Managed by SSHUB with active IMU motion artifact cancellation (`acc_gyro_ppg_sync`).
+- **Atrial Fibrillation (AFib) Detection:** Algorithmic detection present in RTOS (`heart_rate_atrial_fibrillation_app`), though geographically restricted in software (unavailable in Poland/EU consumer builds).
+- **Skin / Wrist Temperature:** High-precision medical thermistor array (`wrist_temperature`) sampled continuously during sleep.
+- **Pedometer & Step Counting:** Real-time cadence and step algorithms (`act_step_completed`) run 24/7 on M55C0.
+
+Because these features run on the BES2610 MCU, installing a custom Linux kernel or AOSP ROM on the Snapdragon AP does not break biometric sensing as long as kernel modules `oplus_comm_master.ko`, `oplus_snshub.ko`, and `bes2610.ko` are retained.
+
+---
+
+## 🛡️ Security Model & Modding Implications
+
+Reverse engineering reveals strict platform security:
+- **`android:exported="false"` Enforcement:** Shell (`uid=2000`) cannot invoke Engineer Mode receivers or trigger diagnostic broadcasts.
+- **No Dedicated Recovery Partition:** The device lacks a standard Android `recovery.img`; recovery logic is integrated into userspace and bootloader routines.
+- **No Physical Hardware Key Combo:** No button sequence has been confirmed to enter Fastboot or EDL from a cold off state; both require initial software commands (`adb reboot bootloader` -> `fastboot oem edl`).
+- **Single-Slot Layout (A-only):** The device does not use A/B virtual A/B partitions (`slot-count` is absent in `getvar all`).
+- **Locked Bootloader (`unlocked:no`):** Partition flashing via Fastboot is disabled by default.
+- **EDL Watchdog Timeout:** Qualcomm EDL mode features a hardware/XBL watchdog timeout of ~10 seconds before auto-rebooting. Flashing partitions via EDL requires acquiring a signed Firehose loader for SW5100 (`monaco`).
+
+---
+
+## 📝 Corrections & Clarifications
+
+Based on verified static and dynamic analysis:
+1. **BES2610 ≠ BES2800:** The co-processor is confirmed to be the Bestechnic **BES2610** (driver `bes2610.ko`).
+2. **BES2610 Role:** It is not merely a sensor hub; it is a full **Wi-Fi 6 (802.11ax) + Bluetooth 5.x + RTOS** multi-core co-processor.
+3. **PM5100 Identification:** `pmw5100-spmi_dlkm.ko` / `qcom,pm5100-spmi` represents the **Qualcomm PM5100 PMIC**, not a PixArt optical sensor.
 
 ---
 
