@@ -12,7 +12,7 @@ A comprehensive reverse-engineering, firmware extraction, and device-tree decomp
 ## 📋 Overview & Hardware Architecture
 
 The OnePlus Watch 3 utilizes a dual-engine / dual-OS hybrid architecture designed for extreme battery efficiency and responsiveness:
-* **Application Processor (AP):** Qualcomm Snapdragon W5+ Gen 1 (codename `monaco`, SW5100 / SDA5100) running Wear OS (Android 14) with a 64-bit Linux Generic Kernel Image (GKI v4, Linux 5.15.170).
+* **Application Processor (AP):** Qualcomm Snapdragon W5+ Gen 1 (codename `monaco` / `Dialga`, SW5100 / SDA5100) running stock Google Wear OS (Android 14) with a 64-bit Linux Generic Kernel Image (GKI v4, Linux 5.15.170). Build fingerprint: `google/monaco/monaco:14/AW2A.240903.001.A3/64:user/release-keys` (security patch 2025-05-01).
 * **Low-Power Co-Processor (MCU/RTOS):** **Bestechnic BES2610** (Dual-core ARM Cortex-M55 + low-power subsystem; *corrected from earlier misidentification as BES2800*) running an RTOS for background health tracking, always-on display, and low-power watchfaces. The kernel driver is `bes2610.ko` and DTS node is `bes2610,master_spi`.
 * **Inter-Processor Communication (IPC):** Handled via `/vendor/bin/hw/vendor-oplus-hardware-transfer@1.0-service` implementing the HIDL interface `vendor.oplus.hardware.transfer@1.0::ITransfer`, paired with `/dev/mcu_upgrade` and high-speed SPI interconnect.
 
@@ -145,37 +145,34 @@ OnePlus Watch 3 is rated **5ATM (50 meters water resistance)**. Opening the case
 
 ---
 
-## EDL Access (Software Method Confirmed)
+## EDL Access (Confirmed)
 
-**Update 2026-10-09:** Empirical testing confirmed that OnePlus Watch 3 can enter Qualcomm EDL mode via a software-only method.
+Software-only EDL entry has been empirically confirmed on a working device.
+
+| Aspect | Value |
+|--------|-------|
+| Command | `fastboot oem edl` |
+| VID:PID | `05c6:9008` (Qualcomm Gobi QDL) |
+| Auto-timeout | ~10 seconds |
+| Exit | Auto-reboot to system, or hold both buttons ~12s |
+| Risk | Zero (no partitions modified) |
 
 ### How to enter EDL
 ```bash
-adb reboot bootloader      # Enter fastboot
-fastboot oem edl           # Enter EDL
+adb reboot bootloader      # Enter fastboot (VID:PID 22d9:2024 OPPO Electronics)
+fastboot oem edl           # Enter EDL (VID:PID 05c6:9008 Qualcomm Gobi QDL)
 ```
 
-### Verification
-Device enumerates as:
-```text
-Bus 003 Device XXX: ID 05c6:9008 Qualcomm, Inc. Gobi Wireless Modem (QDL mode)
-```
+### Safety notes:
+- Entering EDL does NOT modify any partitions
+- Timeout guarantees return to system
+- Manual exit: hold both buttons ~12 seconds
+- Last resort: drain battery to 0
 
-### Auto-timeout
-- **~10 seconds** without host communication
-- Device automatically reboots to system
-- No user intervention required
-- Confirmed failsafe
-
-### What this means
-- EDL entry is **safe** (no partitions modified)
+### What this means:
+- EDL is reachable via software only (no test points needed)
 - Sahara protocol is functional in XBL
-- Device cannot get "stuck" in EDL (timeout guarantees exit)
-- BUT: **flashing still requires signed Firehose loader** (not yet available)
-
-### Safety warnings
-- Do NOT flash anything via EDL without proper loader
-- Do NOT test on daily-driver device
+- Device cannot get stuck in EDL (timeout guarantees exit)
 - See [`reports/edl_confirmation.md`](reports/edl_confirmation.md) and [`reports/edl_recovery_notes.md`](reports/edl_recovery_notes.md)
 
 ---
@@ -222,44 +219,102 @@ The `mcu_firmware/OPWWE251/` directory contains firmware for the Bestechnic BES2
 
 ---
 
-## 🏗️ Hardware Architecture (4-Processor Design)
+## Security Model & Limitations
 
-Detailed analysis reveals that the OnePlus Watch 3 is powered by an advanced 4-processor heterogeneous system:
+This device has several restrictions that affect modding.
 
-1. **Qualcomm Snapdragon W5+ Gen 1 (monaco / SW5100):** Primary Application Processor (AP) running Wear OS 14 on Linux 5.15 GKI. Handles heavy compute, UI, voice, and user applications.
-2. **Bestechnic BES2610:** Dual Cortex-M55 co-processor handling Wi-Fi 6 (802.11ax), Bluetooth 5.x, and low-power RTOS tasks when the AP sleeps.
-3. **Sensor Sub-Hub (SSHUB):** Real-time sensor processing core handling 24/7 continuous optical PPG biometrics, 6-axis IMU (`icm42631` / `lsm6dso`), skin temperature, and rotary crown input.
-4. **Slate Co-Processor:** Dedicated display controller driving the AMOLED panel during Always-On Display (AOD) ambient mode via `slate_events_bridge_rpmsg.ko`.
+| Aspect | Status | Impact |
+|--------|--------|--------|
+| Bootloader | LOCKED (`unlocked:no`) | No fastboot flash |
+| A/B slots | NONE (single-slot, A-only) | No fallback slot |
+| Recovery partition | NONE | No dedicated recovery mode |
+| Physical button combo | UNKNOWN | No confirmed fastboot trigger |
+| Firehose loader (public) | NOT FOUND | EDL read-only without it |
+| Engineer mode broadcast | `exported="false"` | Cannot trigger from shell |
 
-See [`reports/hardware_architecture.md`](reports/hardware_architecture.md) for complete bus diagrams, kernel bindings, and IPC protocols.
+Implications for modders:
+- Flashing any partition requires EDL (no fastboot)
+- EDL flashing requires signed Firehose loader + Digest + Sign
+- A signed OFP package exists (A.94+) that provides full recovery
+- Modifying `init_boot` requires bypassing VIP (Secure Boot)
 
----
-
-## 🛠️ Engineer Mode (Service Menu)
-
-The firmware includes a factory engineering suite (`HeyEngineerModeHuaQin.apk`) equipped with diagnostic menus, hardware calibration, RF controls, and MCU flashing endpoints:
-
-- **Full Documentation & Secret Codes:** Complete documentation, including all 77/78 dialer codes, is available in [`reports/engineer_mode/`](reports/engineer_mode/).
-- **Notable Codes:**
-  - `*#8020#`: Wireless ADB toggle (`WifiAdbHelper`).
-  - `*#9434#`: Secrecy authorization panel (ADB / Log / App decryption).
-  - `*#649010#`: Qualcomm USB Diag port enable (`DiagEnabled`).
-  - `*#3644321#`: Disable partition write protection & enter `reboot_eng`.
-  - `*#3644999#`: Re-enable partition write protection & reset ATM mode.
-- **⚠️ Safety Warnings:**
-  - `*#8778#` (`MasterClear`): **CRITICAL DANGER** — Immediately initiates an unprompted factory data reset.
-  - `*#*#700#` (`McuUpgradeActivity`): **CRITICAL DANGER** — Direct flash interface for the BES2610 NOR flash. An interrupted flash bricks the co-processor.
-- **Access Restrictions:** All sensitive components have `android:exported="false"`, meaning ADB shell (`uid=2000`) cannot trigger them directly without root/system privileges.
+> [!WARNING]
+> Do NOT flash without a confirmed recovery path.
 
 ---
 
-## 🧠 RTOS Analysis (BES2610)
+## Recovery / Unbrick Capability
 
-The co-processor runs an RTOS across three dedicated cores (`M55C0`, `M55C1`, `SSHUB`):
-- **Health & Biometrics:** Runs autonomous PPG filtering, AFib detection, skin temperature tracking, and pedometer counting without waking the Snapdragon AP.
-- **Autonomous GPS:** Offloads GNSS location tracking during workouts via `gps_gnss_service_sensor_send_m55_msg`.
-- **Command Protocol:** Supports a framed binary protocol of 64 host/MCU commands (`reports/mcu_protocol/mcu_commands.txt`).
-- **NOR Flash Bootloader:** Includes an on-board bootloader (`bootloader.bin`) and programmer (`programmer.bin`) supporting sector erase, page burn, and hardware pin recovery (`upg_mode_pin`).
+Important note on firmware recovery:
+
+A full official service package (OFP) exists for the OPWWE251 (A.94 and newer).
+This package contains everything needed to restore the device via EDL:
+- `prog_firehose_ddr.elf` - Qualcomm Firehose programmer
+- `ChainedTableOfDigests_*.bin` - Digest tables for VIP verification
+- `DigestsToSign_*.bin.mbn` - Signed digests for Secure Boot
+- `rawprogram*.xml` / `patch*.xml` - EDL flashing configuration
+- Full bootloader, MCU firmware, and system images
+
+These files are NOT included in this repository for legal reasons (they are proprietary service packages of OPPO/OnePlus).
+
+If your device is bricked:
+- Do NOT panic - EDL mode can restore the device if you have the full OFP.
+- Do NOT flash random images without the proper Firehose loader.
+- Contact the community (XDA, Discord) for help obtaining the package.
+
+Project IDs identified in the OFP:
+- `24965` - OnePlus Watch 3 (OPWWE251)
+- `24966` - OPPO Watch X2 (OWW251)
+
+---
+
+## Engineer Mode (Service Menu)
+
+The device ships with a full OnePlus/Oppo engineer mode (service menu).
+78 secret codes have been mapped from `engineer_order_list.xml`.
+
+Notable codes:
+| Code | Action |
+|------|--------|
+| `*#8020#` | Enable ADB over WiFi (`WifiAdbHelper`) |
+| `*#9434#` | Secrecy panel (ADB/LOG/APP state) |
+| `*#3644999#` | `RebootManager` (requires decrypt first) |
+| `*#649010#` | Enable Qualcomm Diag mode |
+| `*#8011#` | Reset ATM mode |
+| `*#8778#` | FACTORY RESET (`MasterClear`) - WARNING |
+| `*#*#700#` | Flash MCU (`McuUpgradeActivity`) - WARNING |
+
+Full engineer HAL API documented in [`reports/engineer_mode/`](reports/engineer_mode/):
+- `setPartionWriteProtectState(bool)` - Write protect control
+- `writeData()`, `readData()` - Raw partition access
+- `setProperties()` - System property modification
+- `loadSecrecyConfig()`, `saveSecrecyConfig()` - Secrecy config
+- `exportAttkKeyPair()`, `verifyAttkKeyPair()` - Attestation keys
+
+Security limitation:
+`EngineerModeOrderReceiver` is marked `android:exported="false"`, so the secret codes cannot be triggered from shell without system-level privileges.
+
+Full documentation: [`reports/engineer_mode/README.md`](reports/engineer_mode/README.md)
+
+---
+
+## RTOS Analysis (BES2610)
+
+The Bestechnic BES2610 is a combo chip handling WiFi 6 (802.11ax), BT 5.x, and a full health/RTOS subsystem. The RTOS runs on two Cortex-M55 cores (`M55C0`, `M55C1`) plus a sensor hub (`SSHUB`).
+
+Health features found in RTOS firmware:
+- `heart_rate_app`, `heart_rate_notify_app` - Heart rate
+- `heart_rate_atrial_fibrillation_app` - AFib detection (region-locked)
+- `wrist_temperature` - Skin temperature
+- `step_complete`, `act_step_completed` - Step counter
+- `acc_gyro_ppg_sync` - PPG synchronized with IMU
+- GPS handled by M55 (`gps_gnss_service_sensor_send_m55_msg`)
+
+MCU protocol (64 commands):
+Documented in [`reports/mcu_protocol/mcu_commands.txt`](reports/mcu_protocol/mcu_commands.txt)
+
+RTOS bootloader:
+Contains full NOR flash programmer (`FLASH CMD`, `ERASE_DATA`, `BURN_DATA`, `VERIFY_DATA`) and `upg_mode_pin` for upgrade mode entry.
 
 See [`reports/rtos_analysis.md`](reports/rtos_analysis.md) for full protocol tables and reverse engineering details.
 
@@ -277,24 +332,36 @@ Because these features run on the BES2610 MCU, installing a custom Linux kernel 
 
 ---
 
-## 🛡️ Security Model & Modding Implications
+## Hardware Architecture (4-Processor Design)
 
-Reverse engineering reveals strict platform security:
-- **`android:exported="false"` Enforcement:** Shell (`uid=2000`) cannot invoke Engineer Mode receivers or trigger diagnostic broadcasts.
-- **No Dedicated Recovery Partition:** The device lacks a standard Android `recovery.img`; recovery logic is integrated into userspace and bootloader routines.
-- **No Physical Hardware Key Combo:** No button sequence has been confirmed to enter Fastboot or EDL from a cold off state; both require initial software commands (`adb reboot bootloader` -> `fastboot oem edl`).
-- **Single-Slot Layout (A-only):** The device does not use A/B virtual A/B partitions (`slot-count` is absent in `getvar all`).
-- **Locked Bootloader (`unlocked:no`):** Partition flashing via Fastboot is disabled by default.
-- **EDL Watchdog Timeout:** Qualcomm EDL mode features a hardware/XBL watchdog timeout of ~10 seconds before auto-rebooting. Flashing partitions via EDL requires acquiring a signed Firehose loader for SW5100 (`monaco`).
+| Processor | Role | Communication |
+|-----------|------|---------------|
+| Snapdragon W5+ Gen 1 | Application (Wear OS, Linux 5.15.170 GKI) | Main |
+| Bestechnic BES2610 | WiFi 6 + BT 5.x + RTOS (`M55C0`/`M55C1`) | SPI (`oplus_comm_master.ko`) |
+| SSHUB | Sensor Hub (PPG, IMU) | IPC to M55 |
+| Slate | Display / AOD | SPI (`slate_events_bridge.ko`) |
+
+Key kernel modules:
+- `oplus_comm_master.ko` - Main IPC channel to BES2610
+- `oplus_comm_master_bt.ko` - BT communication
+- `oplus_snshub.ko` - Sensor hub driver
+- `bes2610.ko` - WiFi 6 cfg80211 driver (9,163 symbols)
+- `slate_events_bridge.ko` / `_rpmsg.ko` - Slate communication
+- `oplus_crown.ko` - Rotary crown (`mot6010` / `pat9125`)
+- `haptic.ko` - AW86927 with haptic audio support
+
+See [`reports/hardware_architecture.md`](reports/hardware_architecture.md) for complete bus diagrams, kernel bindings, and IPC protocols.
 
 ---
 
-## 📝 Corrections & Clarifications
+## Corrections to Earlier Documentation
 
-Based on verified static and dynamic analysis:
-1. **BES2610 ≠ BES2800:** The co-processor is confirmed to be the Bestechnic **BES2610** (driver `bes2610.ko`).
-2. **BES2610 Role:** It is not merely a sensor hub; it is a full **Wi-Fi 6 (802.11ax) + Bluetooth 5.x + RTOS** multi-core co-processor.
-3. **PM5100 Identification:** `pmw5100-spmi_dlkm.ko` / `qcom,pm5100-spmi` represents the **Qualcomm PM5100 PMIC**, not a PixArt optical sensor.
+| Earlier claim | Correction |
+|---------------|------------|
+| BES2800 | BES2610 (Bestechnic) |
+| BES2610 is sensor hub only | BES2610 = WiFi 6 + BT 5.x + RTOS sensor hub |
+| PM5100 = PixArt PMW5100 | PM5100 = Qualcomm PMIC (`qcom,pm5100-spmi`) |
+| PPG on Linux | PPG on RTOS (BES2610) |
 
 ---
 
