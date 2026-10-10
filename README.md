@@ -4,6 +4,7 @@
 [![Platform](https://img.shields.io/badge/SoC-Qualcomm_Snapdragon_W5+_Gen_1_(Monaco)-green.svg)](https://www.qualcomm.com)
 [![Co--processor](https://img.shields.io/badge/MCU-Bestechnic_BES2610-orange.svg)](https://www.bestechnic.com)
 [![Android](https://img.shields.io/badge/OS-Wear_OS_(Android_14_GKI)-brightgreen.svg)](https://source.android.com)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?logo=discord&logoColor=white)](https://discord.gg/F4YK2YhFMc)
 
 A comprehensive reverse-engineering, firmware extraction, and device-tree decompilation repository for the **OnePlus Watch 3 (OPWWE251)** smartwatch.
 
@@ -258,7 +259,7 @@ Implications for modders:
 - Boot-time verification of `init_boot` is enforced by Android Verified Boot (AVB 2.0 / `vbmeta`) when locked; unlocking the bootloader instructs ABL to skip boot verification
 - Recovery mode exists exclusively for OTA package installation; manually entering it displays the "No command" screen, offers no interactive menu via button combinations, and auto-reboots back to the system after ~1 minute
 - A signed OFP service package exists (A.94+) containing `prog_firehose_ddr.elf` for full EDL unbricking
-- The Firehose loader is proprietary and private (not hosted in this repo); contact the community (XDA/Discord) for recovery help
+- The Firehose loader is proprietary and private (not hosted in this repo); contact the community (XDA / [Discord](https://discord.gg/F4YK2YhFMc)) for recovery help
 - EDL flashing requires signed Firehose loader + Digest + Sign (VIP validation)
 
 > [!WARNING]
@@ -283,7 +284,7 @@ These files are NOT included in this repository for legal reasons (they are prop
 If your device is bricked:
 - Do NOT panic - EDL mode can restore the device if you have the full OFP.
 - Do NOT flash random images without the proper Firehose loader.
-- Contact the community (XDA, Discord) for help obtaining the package.
+- Contact the community (XDA, [Discord](https://discord.gg/F4YK2YhFMc)) for help obtaining the package.
 
 Project IDs and Hardware Revisions confirmed from firmware build properties (`build_24965.prop` & `build_24966.prop`):
 - `24965` - **OnePlus Watch 3** (`OPWWE251`), Hardware Revision `XK929`
@@ -490,6 +491,16 @@ python3 decompile_kernel_dtb.py
 ./scripts/analyze_modules.sh
 ./scripts/verify_kernel.sh
 ```
+
+---
+
+## 💬 Community & Support
+
+Have questions, need EDL unbricking assistance, or want to collaborate on reverse-engineering the OnePlus Watch 3 / OPPO Watch X2?
+
+[![Join Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/F4YK2YhFMc)
+
+Join the discussion on Discord: **[https://discord.gg/F4YK2YhFMc](https://discord.gg/F4YK2YhFMc)**
 
 ---
 
