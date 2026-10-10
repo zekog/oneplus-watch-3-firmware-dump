@@ -15,6 +15,9 @@ The OnePlus Watch 3 utilizes a dual-engine / dual-OS hybrid architecture designe
 * **Application Processor (AP):** Qualcomm Snapdragon W5+ Gen 1 (codename `monaco` / `Dialga`, SW5100 / SDA5100) running stock Google Wear OS (Android 14) with a 64-bit Linux Generic Kernel Image (GKI v4, Linux 5.15.170). Build fingerprint: `google/monaco/monaco:14/AW2A.240903.001.A3/64:user/release-keys` (security patch 2025-05-01).
 * **Low-Power Co-Processor (MCU/RTOS):** **Bestechnic BES2610** (Dual-core ARM Cortex-M55 + low-power subsystem; *corrected from earlier misidentification as BES2800*) running an RTOS for background health tracking, always-on display, and low-power watchfaces. The kernel driver is `bes2610.ko` and DTS node is `bes2610,master_spi`.
 * **Inter-Processor Communication (IPC):** Handled via `/vendor/bin/hw/vendor-oplus-hardware-transfer@1.0-service` implementing the HIDL interface `vendor.oplus.hardware.transfer@1.0::ITransfer`, paired with `/dev/mcu_upgrade` and high-speed SPI interconnect.
+* **Confirmed Project ID & Hardware Revision:**
+  * **OnePlus Watch 3 (`OPWWE251`):** Project ID **`24965`** (`ro.separate.soft=24965`), Hardware Revision **`XK929`** (`ro.product.hardware=XK929`), Brand `OnePlus` (`ro.product.brand=OnePlus`, `ro.oppo.market.name=OnePlus Watch`, `ro.product.display_name=OnePlus Watch 3`). Confirmed via `system_extracted/system/build_24965.prop`.
+  * **OPPO Watch X2 (`OWWE251`):** Project ID **`24966`** (`ro.separate.soft=24966`), Hardware Revision **`XK927`** (`ro.product.hardware=XK927`), Brand `OPPO` (`ro.product.brand=OPPO`, `ro.oppo.market.name=OPPO Watch`, `ro.product.display_name=OPPO Watch X2`). Confirmed via `system_extracted/system/build_24966.prop`.
 
 ---
 
@@ -224,18 +227,39 @@ The `mcu_firmware/OPWWE251/` directory contains firmware for the Bestechnic BES2
 This device has several restrictions that affect modding.
 
 | Aspect | Status | Impact |
-|--------|--------|--------|
+|---|---|---|
+| Bootloader Unlock | SUPPORTED (`ro.oem_unlock_supported=1`) | Official unlock supported via `fastboot flashing unlock`; wipes user data, voids warranty, disables Google Wallet / Play Integrity |
 | A/B slots | NONE (single-slot, A-only) | No fallback slot |
 | Recovery mode | LIMITED (OTA only) | Displays "No command", no interactive menu via button combos, auto-reboots after ~1 min |
 | Physical button combo | UNKNOWN | No confirmed fastboot trigger |
 | Engineer mode broadcast | `exported="false"` | Cannot trigger from shell |
 
+### 🔓 Critical Discovery: Bootloader Unlocking Supported (`ro.oem_unlock_supported=1`)
+
+Analysis of system build properties (`build_24965.prop`) reveals that **OEM bootloader unlocking is officially supported**:
+* **Property:** `ro.oem_unlock_supported=1` is explicitly set in firmware build properties.
+* **Unlock Command:** The standard Android Fastboot unlock command:
+  ```bash
+  fastboot flashing unlock
+  ```
+  is implemented in the Application Boot Loader (`abl.elf` / LinuxLoader PE binary `section1.pe`), which includes handlers for `flashing unlock` and `flashing get_unlock_ability`.
+* **AVB Bypass on Unlock:** When unlocked, ABL explicitly skips AVB verification:
+  ```
+  Device is unlocked, Skipping boot verification
+  ```
+  This allows booting modified `init_boot` (Magisk, KernelSU) or custom kernel images without VIP signature enforcement.
+* **Consequences of Unlocking:**
+  * **Complete Data Wipe:** Executing `fastboot flashing unlock` automatically triggers a cryptographic factory reset of `/data` (`userdata`).
+  * **Warranty Void:** Unlocking flags the bootloader tamper state and voids manufacturer warranty.
+  * **Google Wallet / Play Integrity Loss:** Permanently breaks hardware-backed Google Play Integrity / CTS verification, disabling NFC contactless payments (Google Wallet).
+
 Implications for modders:
+- **OEM Bootloader Unlock is supported** (`ro.oem_unlock_supported=1`); developers can unlock via `fastboot flashing unlock`, but this wipes userdata, voids warranty, and disables Google Wallet
+- Boot-time verification of `init_boot` is enforced by Android Verified Boot (AVB 2.0 / `vbmeta`) when locked; unlocking the bootloader instructs ABL to skip boot verification
 - Recovery mode exists exclusively for OTA package installation; manually entering it displays the "No command" screen, offers no interactive menu via button combinations, and auto-reboots back to the system after ~1 minute
 - A signed OFP service package exists (A.94+) containing `prog_firehose_ddr.elf` for full EDL unbricking
 - The Firehose loader is proprietary and private (not hosted in this repo); contact the community (XDA/Discord) for recovery help
 - EDL flashing requires signed Firehose loader + Digest + Sign (VIP validation)
-- Boot-time verification of `init_boot` is enforced by Android Verified Boot (AVB 2.0 / `vbmeta`)
 
 > [!WARNING]
 > Do NOT flash without a confirmed recovery path.
@@ -261,9 +285,9 @@ If your device is bricked:
 - Do NOT flash random images without the proper Firehose loader.
 - Contact the community (XDA, Discord) for help obtaining the package.
 
-Project IDs identified in the OFP:
-- `24965` - OnePlus Watch 3 (OPWWE251)
-- `24966` - OPPO Watch X2 (OWW251)
+Project IDs and Hardware Revisions confirmed from firmware build properties (`build_24965.prop` & `build_24966.prop`):
+- `24965` - **OnePlus Watch 3** (`OPWWE251`), Hardware Revision `XK929`
+- `24966` - **OPPO Watch X2** (`OWWE251`), Hardware Revision `XK927`
 
 ---
 
