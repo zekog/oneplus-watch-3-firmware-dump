@@ -228,12 +228,13 @@ This device has several restrictions that affect modding.
 | A/B slots | NONE (single-slot, A-only) | No fallback slot |
 | Recovery partition | NONE | No dedicated recovery mode |
 | Physical button combo | UNKNOWN | No confirmed fastboot trigger |
-| Firehose loader (public) | NOT FOUND | EDL read-only without it |
+| Firehose loader | FOUND | Private (contact community for EDL recovery) |
 | Engineer mode broadcast | `exported="false"` | Cannot trigger from shell |
 
 Implications for modders:
+- A signed OFP service package exists (A.94+) containing `prog_firehose_ddr.elf` for full EDL unbricking
+- The Firehose loader is proprietary and private (not hosted in this repo); contact the community (XDA/Discord) for recovery help
 - EDL flashing requires signed Firehose loader + Digest + Sign (VIP validation)
-- A signed OFP package exists (A.94+) that provides full recovery
 - Boot-time verification of `init_boot` is enforced by Android Verified Boot (AVB 2.0 / `vbmeta`)
 
 > [!WARNING]
