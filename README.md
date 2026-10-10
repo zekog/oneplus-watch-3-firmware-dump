@@ -225,7 +225,6 @@ This device has several restrictions that affect modding.
 
 | Aspect | Status | Impact |
 |--------|--------|--------|
-| Bootloader | LOCKED (`unlocked:no`) | No fastboot flash |
 | A/B slots | NONE (single-slot, A-only) | No fallback slot |
 | Recovery partition | NONE | No dedicated recovery mode |
 | Physical button combo | UNKNOWN | No confirmed fastboot trigger |
@@ -233,10 +232,9 @@ This device has several restrictions that affect modding.
 | Engineer mode broadcast | `exported="false"` | Cannot trigger from shell |
 
 Implications for modders:
-- Flashing any partition requires EDL (no fastboot)
-- EDL flashing requires signed Firehose loader + Digest + Sign
+- EDL flashing requires signed Firehose loader + Digest + Sign (VIP validation)
 - A signed OFP package exists (A.94+) that provides full recovery
-- Modifying `init_boot` requires bypassing VIP (Secure Boot)
+- Boot-time verification of `init_boot` is enforced by Android Verified Boot (AVB 2.0 / `vbmeta`)
 
 > [!WARNING]
 > Do NOT flash without a confirmed recovery path.
