@@ -35,6 +35,14 @@ Bus 003 Device 064: ID 05c6:9008 Qualcomm, Inc. Gobi Wireless Modem (QDL mode)
 - Auto-timeout: ~10 seconds, then auto-reboot to system
 - No user intervention required
 
+### Test 3: Recovery Mode
+Command: `adb reboot recovery`
+Result:
+- Displays static Android "No command" screen
+- Designed strictly for automated OTA update scripts
+- No hardware button combination (crown + side button) brings up the interactive recovery menu
+- Watchdog auto-timeout: device automatically reboots back to the standard OS after ~60 seconds (1 minute) of inactivity
+
 ## XBL Analysis (static)
 Confirmed strings in `xbl.elf`:
 - `Sahara: Hello pkt sent` (offset 0x002cd590)

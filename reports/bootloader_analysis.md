@@ -201,6 +201,7 @@ Software-only EDL entry confirmed on working device.
 Commands tested:
 1. `adb reboot bootloader` -> fastboot mode (VID:PID 22d9:2024)
 2. `fastboot oem edl` -> EDL mode (VID:PID 05c6:9008)
+3. `adb reboot recovery` -> recovery mode (displays "No command", no button combo menu, ~1 min auto-reboot timeout)
 
 EDL behavior:
 - Device enumerates as Qualcomm Gobi QDL (05c6:9008)

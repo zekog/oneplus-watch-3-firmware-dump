@@ -226,11 +226,12 @@ This device has several restrictions that affect modding.
 | Aspect | Status | Impact |
 |--------|--------|--------|
 | A/B slots | NONE (single-slot, A-only) | No fallback slot |
-| Recovery partition | NONE | No dedicated recovery mode |
+| Recovery mode | LIMITED (OTA only) | Displays "No command", no interactive menu via button combos, auto-reboots after ~1 min |
 | Physical button combo | UNKNOWN | No confirmed fastboot trigger |
 | Engineer mode broadcast | `exported="false"` | Cannot trigger from shell |
 
 Implications for modders:
+- Recovery mode exists exclusively for OTA package installation; manually entering it displays the "No command" screen, offers no interactive menu via button combinations, and auto-reboots back to the system after ~1 minute
 - A signed OFP service package exists (A.94+) containing `prog_firehose_ddr.elf` for full EDL unbricking
 - The Firehose loader is proprietary and private (not hosted in this repo); contact the community (XDA/Discord) for recovery help
 - EDL flashing requires signed Firehose loader + Digest + Sign (VIP validation)

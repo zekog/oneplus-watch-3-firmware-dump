@@ -74,8 +74,11 @@ Without valid decryption, invoking engineering commands triggers `"decrypt first
 1. **Single-Slot Layout (A-only):**
    - `fastboot getvar all` confirms the absence of `slot-count` and `current-slot`.
    - The device does not utilize modern Android A/B seamless updates.
-2. **Missing Recovery Partition:**
-   - There is no independent recovery environment (`recovery.img`). Recovery operations are integrated directly into userspace factory reset workflows via `MasterClear` (`android.settings.FACTORYRESET`) and bootloader metadata.
+2. **Recovery Environment Behavior:**
+   - Recovery mode exists exclusively for automated system OTA installations (`OplusRecoverySystem`).
+   - Manually entering recovery (e.g., via `adb reboot recovery`) displays the static Android "No command" screen.
+   - No hardware button combination (digital crown + side button) brings up an interactive recovery menu (Wipe data, ADB sideload, etc.).
+   - A built-in watchdog timeout automatically reboots the watch back to the normal OS after ~1 minute (60 seconds) of inactivity.
 3. **Hardware Key Combinations:**
    - No hardware button combination (digital crown + side key) has been found to enter Fastboot or EDL from a cold powered-off state. Both modes currently require initial software-based entry (`adb reboot bootloader` -> `fastboot oem edl`).
 4. **Bootloader Locking:**
