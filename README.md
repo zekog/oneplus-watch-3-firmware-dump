@@ -228,7 +228,6 @@ This device has several restrictions that affect modding.
 | A/B slots | NONE (single-slot, A-only) | No fallback slot |
 | Recovery partition | NONE | No dedicated recovery mode |
 | Physical button combo | UNKNOWN | No confirmed fastboot trigger |
-| Firehose loader | FOUND | Private (contact community for EDL recovery) |
 | Engineer mode broadcast | `exported="false"` | Cannot trigger from shell |
 
 Implications for modders:
