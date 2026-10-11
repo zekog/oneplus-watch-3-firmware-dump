@@ -56,3 +56,4 @@ __pycache__/
 # Agent execution logs
 agent_log.txt
 blockers.txt
+firmware-update/rea/

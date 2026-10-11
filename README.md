@@ -507,3 +507,32 @@ Join the discussion on Discord: **[https://discord.gg/F4YK2YhFMc](https://discor
 ## 📄 License & Attribution
 * Device firmware and vendor binaries are intellectual property of OnePlus / OPlus / Qualcomm / Bestechnic.
 * Provided strictly for educational, interoperability, and reverse-engineering research purposes under fair use.
+
+---
+
+## Reverse Engineering Analysis (New)
+
+We have completed a comprehensive reverse engineering analysis of the
+OnePlus Watch 3 firmware. Full reports are in `reports/`.
+
+### Major Discoveries
+
+1. **Auto-EDL watchdog**: device enters EDL automatically after 2 failed boots
+2. **EDL cable works**: short D+ to GND at boot forces EDL
+3. **VBUS low triggers EDL**: threshold ~4.25V on PMIC comparator
+4. **BCB supports boot-fastboot**: write "boot-fastboot" to misc for fastbootd
+5. **Secure Boot is DISABLED on BES2610**: custom RTOS firmware is possible
+6. **AFib unlock**: algorithm exists in RTOS, can be enabled via IPC
+7. **Full IPC protocol documented**: 9 channels, 77 commands
+8. **Write protect is a software flag**: in oplusreserve1 partition
+9. **Custom haptic waveforms**: possible via sysfs
+
+### Important for Modders
+
+- **Magisk is now SAFE**: auto-EDL failsafe means bootloop is recoverable
+- **Unlocking bootloader = losing Google Wallet**
+- **Full OFP package exists** for EDL recovery
+- **Bootloader unlock supported**: ro.oem_unlock_supported=1
+
+See `reports/RE_ANALYSIS_INDEX.md` for full details.
+
