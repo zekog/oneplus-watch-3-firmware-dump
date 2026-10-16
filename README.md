@@ -10,493 +10,256 @@ A comprehensive reverse-engineering, firmware extraction, and device-tree decomp
 
 ---
 
+## ⚡ What Works and What Doesn't
+
+Current modding, flashing, and recovery capabilities on the OnePlus Watch 3:
+
+### Works:
+- **Fastboot flash:** Fully functional with unlocked bootloader (`fastboot flashing unlock`) from a running system or via software reboot.
+- **Magisk / Root:** Confirmed viable (matches OnePlus Watch 2 / AArch64 Wear OS GKI boot image patching).
+- **Custom kernel:** Standard Linux 5.15 GKI v4 with out-of-tree vendor modules (`vendor_dlkm`).
+- **EDL read:** Memory dumps and partition reading via `edl r` / `printgpt`.
+- **Auto-EDL failsafe:** Automatic transition to Emergency Download (9008) mode after 2 consecutive boot failures.
+
+### Doesn't Work:
+- **EDL flash:** Blocked by Qualcomm VIP (Validated Image Programming) requiring 2 real-time server-signed authorization packets from OPPO (OCSM/WCSM).
+- **Fastboot on brick:** Unreachable when the OS fails to boot (no physical button combination enters fastboot).
+- **CVE-2026-25262 bypass:** Sahara write-what-where vulnerability is patched in XBL, Firehose loader is encrypted, and PBL ROM is inaccessible.
+
+---
+
 ## 📋 Overview & Hardware Architecture
 
-The OnePlus Watch 3 utilizes a dual-engine / dual-OS hybrid architecture designed for extreme battery efficiency and responsiveness:
-* **Application Processor (AP):** Qualcomm Snapdragon W5+ Gen 1 (codename `monaco` / `Dialga`, SW5100 / SDA5100) running stock Google Wear OS (Android 14) with a 64-bit Linux Generic Kernel Image (GKI v4, Linux 5.15.170). Build fingerprint: `google/monaco/monaco:14/AW2A.240903.001.A3/64:user/release-keys` (security patch 2025-05-01).
-* **Low-Power Co-Processor (MCU/RTOS):** **Bestechnic BES2610** (Dual-core ARM Cortex-M55 + low-power subsystem; *corrected from earlier misidentification as BES2800*) running an RTOS for background health tracking, always-on display, and low-power watchfaces. The kernel driver is `bes2610.ko` and DTS node is `bes2610,master_spi`.
-* **Inter-Processor Communication (IPC):** Handled via `/vendor/bin/hw/vendor-oplus-hardware-transfer@1.0-service` implementing the HIDL interface `vendor.oplus.hardware.transfer@1.0::ITransfer`, paired with `/dev/mcu_upgrade` and high-speed SPI interconnect.
-* **Confirmed Project ID & Hardware Revision:**
-  * **OnePlus Watch 3 (`OPWWE251`):** Project ID **`24965`** (`ro.separate.soft=24965`), Hardware Revision **`XK929`** (`ro.product.hardware=XK929`), Brand `OnePlus` (`ro.product.brand=OnePlus`, `ro.oppo.market.name=OnePlus Watch`, `ro.product.display_name=OnePlus Watch 3`). Confirmed via `system_extracted/system/build_24965.prop`.
-  * **OPPO Watch X2 (`OWWE251`):** Project ID **`24966`** (`ro.separate.soft=24966`), Hardware Revision **`XK927`** (`ro.product.hardware=XK927`), Brand `OPPO` (`ro.product.brand=OPPO`, `ro.oppo.market.name=OPPO Watch`, `ro.product.display_name=OPPO Watch X2`). Confirmed via `system_extracted/system/build_24966.prop`.
-
----
-
-## 🔬 Hardware Components Identified
-
-Through detailed analysis of the decompiled Device Tree Sources (`device_tree/`) and extracted dynamic kernel modules (`vendor_dlkm`), the following hardware components have been mapped:
-
-* **Touchscreen (Dual-Sourced):**
-  * Primary: **FocalTech FTS** (`focaltech_fts.ko`, compatible `focaltech,fts` on I2C address `0x38`)
-  * Alternate: **Zinitix BT541** (`zinitix.ko`, compatible `zinitix,bt541_ts_device` on I2C address `0x20`)
-  * Both share pin multiplexing: IRQ GPIO TLMM 13 (`0x0d`), Reset GPIO TLMM 12 (`0x0c`), resolution 466x466.
-* **Display & Graphics:**
-  * **Qualcomm MSM DRM** (`msm_drm.ko`) & Adreno GPU driver (`msm_kgsl.ko`)
-  * Panels: **Chipone ICNA3311** 1.43" AMOLED (466x466) & **FocalTech FT2390** 1.502" AMOLED via MIPI DSI Command Mode.
-* **Power Management & Biometric Subsystems:**
-  * **Qualcomm PM5100 SPMI** (`pmw5100-spmi_dlkm.ko`, compatible `qcom,pm5100-spmi`): Qualcomm PMIC power management and VADC interface (*corrected from earlier PixArt misidentification*). Optical PPG and biometric acquisition is driven autonomously by the BES2610 RTOS co-processor.
-* **Rotary Crown (Encoder):**
-  * Driven by `oplus_crown.ko` with dual-sourced optical motion tracking sensors:
-    * **Mixosense MOT6010** (`mixosense,mot6010` on I2C address `0x74`, default active)
-    * **PixArt PAT9125** (`pixart,pat9125` on I2C address `0x75`)
-    * IRQ GPIO TLMM 56 (`0x38`).
-* **Battery & Power Management:**
-  * **Qualcomm Battery Gauge (QBG):** `qti-qbg-main.ko` (`qcom,qbg`)
-  * **Charger:** Qualcomm SMB Lite `qpnp-smblite-main.ko` (`qcom,qpnp-pm5100-smblite`)
-  * **PMIC:** Qualcomm PM5100 over SPMI with multi-channel VADC thermistors.
-* **Sensor Hub & Motion:**
-  * **OPlus Sensor Hub:** `oplus_snshub.ko` (`oplus,sensor-hub`)
-  * **Qualcomm Sensors:** `qti_qmi_sensor.ko` (`qcom,qmi-sensors`) communicating with Qualcomm SLPI / ADSP.
-
----
-
-## 📦 Summary of Included Resources
-
-This repository includes decompiled sources, reconstructed symbols, extracted kernel modules, and analysis tools:
-
-### 1. Decompiled Device Tree Sources (`.dts`)
-Located in [`extracted_images/device_tree/`](extracted_images/device_tree/):
-* **`monaco_base_soc.dts`** (10,241 lines, 281.8 KB): Full base platform device tree decompiled from `vendor_boot.img` (`monaco_base_soc.dtb`), describing clocks, regulators, SPMI, pin controllers, I2C/SPI buses, and memory maps.
-* **`dtbo_overlay_00.dts` & `dtbo_overlay_01.dts`** (3,391 lines each): Device tree overlay for the `Monaco Watch V4B01` hardware board revision.
-* **`dtbo_overlay_02.dts` to `dtbo_overlay_05.dts`** (3,533 lines each): Device tree overlays for `Monaco Watch V5B01` board variant revisions.
-* **`dtbo_overlay_06.dts` to `dtbo_overlay_09.dts`** (3,676 lines each): Updated device tree overlays for `Monaco Watch V5B01` board variant revisions.
-
-### 2. Reconstructed Kernel Symbol ELF
-Located at [`extracted_images/kernel_with_symbols.elf`](extracted_images/kernel_with_symbols.elf):
-* **Format:** ELF 64-bit LSB Executable (AArch64 ARM64, not stripped).
-* **Size:** ~48.34 MB.
-* **Kernel Version:** `Linux version 5.15.170-android14-11-maybe-dirty (SMP PREEMPT)`.
-* **Symbol Table:** **141,777 unstripped kallsyms functions and data symbols** reconstructed from the GKI `boot.img` kernel binary using `vmlinux-to-elf`, ready for immediate decompilation in IDA Pro, Ghidra, or Binary Ninja.
-
-### 3. RTOS MCU Binaries (Bestechnic BES2610)
-Located in [`mcu_firmware/OPWWE251/`](mcu_firmware/OPWWE251/):
-* `OPWWE251_M55C0_2505201801.bin` (6.34 MB): Primary Cortex-M55 Core 0 RTOS firmware.
-* `OPWWE251_M55C1_2505201801.bin` (5.57 MB): Secondary Cortex-M55 Core 1 RTOS firmware.
-* `OPWWE251_SSHUB_2505201801.bin` (980.1 KB): Sensor Subsystem Hub (SSHUB) firmware.
-* `bootloader.bin` (254.1 KB) & `programmer.bin` (68.9 KB): Flashing and bootstrap binaries for the MCU.
-* `config.txt` & `symbols.txt`: Firmware configuration descriptors.
-
-### 4. Technical Analysis Reports & Indexes
-Located in [`reports/`](reports/):
-* **[`reports/hardware_architecture.md`](reports/hardware_architecture.md):** Deep architectural report on the 4-processor design (Snapdragon W5+, BES2610, SSHUB, Slate).
-* **[`reports/rtos_analysis.md`](reports/rtos_analysis.md):** Comprehensive analysis of Bestechnic BES2610 RTOS firmware, health algorithms, bootloader, and 64 MCU commands.
-* **[`reports/engineer_mode/`](reports/engineer_mode/):** Complete documentation of Engineer Mode (`HeyEngineerModeHuaQin`), 78 secret codes, HAL APIs, and write-protect flows.
-* **[`reports/edl_confirmation.md`](reports/edl_confirmation.md):** Empirical verification of software EDL access, USB VID:PID enumeration, and auto-timeout.
-* **[`reports/bootloader_analysis.md`](reports/bootloader_analysis.md):** In-depth analysis of Qualcomm bootloader binaries, XBL forced EDL conditions, TLMM configurations, and unbricking implications.
-* **[`reports/edl_recovery_notes.md`](reports/edl_recovery_notes.md):** Research notes on non-destructive software EDL entry vectors (VBUS low, failed boot counter) vs hardware test points.
-* **[`reports/vendor_dlkm_modules.csv`](reports/vendor_dlkm_modules.csv):** Detailed CSV index of all 137 vendor kernel modules with file sizes, symbol counts, and driver descriptions.
-* **[`reports/dts_hardware_map.md`](reports/dts_hardware_map.md):** Detailed peripheral mapping (touch, display, crown, PMIC, BES2610 interconnect).
-* **[`reports/kernel_driver_check.txt`](reports/kernel_driver_check.txt):** Audit report verifying GKI core symbols vs offloaded out-of-tree dynamic drivers.
-* **[`firmware_report.txt`](firmware_report.txt):** Full index of 50 low-level Qualcomm firmware binaries (`.elf`, `.bin`, `.mbn`) and HAL services.
-* **[`decompilation_report.txt`](decompilation_report.txt):** Details of the kernel symbol extraction and DTB/DTBO decompilation.
-* **[`verification_report.txt`](verification_report.txt):** Verification and block counts of the unpacked OTA partitions.
-
----
-
-## 🔐 Bootloader & EDL Analysis
-
-The `firmware-update/` directory contains all Qualcomm bootloader images for OPWWE251.
-
-### Bootloader Files
-
-| File | Size | Format | Description |
-|---|---|---|---|
-| `xbl.elf` | 2.8 MB | ELF | eXtended Boot Loader - contains forced EDL logic |
-| `abl.elf` | 263 KB | UEFI FV | Application Boot Loader (fastboot) |
-| `xbl_config.elf` | 24 KB | ELF | XBL configuration |
-| `devcfg_msm_ddr.mbn` | 38 KB | ELF | Device Config (TLMM/GPIO) |
-| `qupv3fw.elf` | 58 KB | ELF | QUP v3 firmware |
-| `rpm.mbn` | 244 KB | MBN | Resource Power Manager |
-| `hyp.mbn` | 354 KB | MBN | Hypervisor |
-| `tz.mbn` | 2.9 MB | MBN | TrustZone |
-| `keymint.mbn` | 326 KB | MBN | Key Management |
-| `imagefv.elf` | 16 KB | UEFI FV | Image Firmware Verification |
-| `uefi_sec.mbn` | 118 KB | MBN | UEFI Security verification module |
-| `apdp.mbn` | 12 KB | MBN | Application Primary Debug Policy |
-| `storsec.mbn` | 16 KB | MBN | Storage Security engine |
-| `multi_image.mbn` | 12 KB | MBN | Multi-image bootloader descriptor |
-| `NON-HLOS.bin` | 33 MB | - | Modem firmware |
-| `dspso.bin` | 64 MB | - | DSP firmware |
-| `dtbo.img` | 10 MB | DTBO | Device Tree Overlays |
-| `vbmeta.img` | 12 KB | VBMETA | Verified Boot Metadata |
-| `vbmeta_system.img` | 4 KB | VBMETA | System partition AVB 2.0 metadata |
-
-### Forced EDL Logic (from `xbl.elf`)
-
-XBL contains a built-in failsafe that automatically enters EDL when one of these conditions is met during boot:
-- `fedl, pmi_not_detected` - PMIC not detected
-- `fedl, vbus_det_err` - USB VBUS detection error
-- `fedl, vbus_low` - USB VBUS voltage too low
-- `fedl, chgr_type_det_err` - Charger type detection error
-- `fedl, chgr_det_timeout` - Charger detection timeout
-- `EDL: sbl1_dload_entry: dload_entry_count > 1` - Failed boot counter threshold
-
-### TLMM GPIO Configuration (from `devcfg_msm_ddr.mbn`)
-
-- `tlmm_gpio_test_pin` - test pin (numeric value in binary section)
-- `tlmm_total_gpio`, `tlmm_base`, `tlmm_offset`
-- `/tlmm/configs`
-
-### EDL Access Strategies (NO case opening)
-
-1. **Forced EDL via `vbus_low`** - software-based, safest
-2. **Failed boot counter** - requires power cycling during boot
-3. **TLMM test pin short** - hardware-based, DESTROYS WATER RESISTANCE
-
-### ⚠️ WARNING: Water Resistance
-
-OnePlus Watch 3 is rated **5ATM (50 meters water resistance)**. Opening the case to access physical PCB test points permanently destroys the water-resistant adhesive seal. Before flashing any boot-critical partition (`boot`, `init_boot`, `vendor_boot`, `dtbo`, `vbmeta`, `recovery`), be aware that there is currently no confirmed software-only method to recover from a brick.
-
----
-
-## EDL Access (Confirmed)
-
-Software-only EDL entry has been empirically confirmed on a working device.
-
-| Aspect | Value |
-|--------|-------|
-| Command | `fastboot oem edl` |
-| VID:PID | `05c6:9008` (Qualcomm Gobi QDL) |
-| Auto-timeout | ~10 seconds |
-| Exit | Auto-reboot to system, or hold both buttons ~12s |
-| Risk | Zero (no partitions modified) |
-
-### How to enter EDL
-```bash
-adb reboot bootloader      # Enter fastboot (VID:PID 22d9:2024 OPPO Electronics)
-fastboot oem edl           # Enter EDL (VID:PID 05c6:9008 Qualcomm Gobi QDL)
-```
-
-### Safety notes:
-- Entering EDL does NOT modify any partitions
-- Timeout guarantees return to system
-- Manual exit: hold both buttons ~12 seconds
-- Last resort: drain battery to 0
-
-### What this means:
-- EDL is reachable via software only (no test points needed)
-- Sahara protocol is functional in XBL
-- Device cannot get stuck in EDL (timeout guarantees exit)
-- See [`reports/edl_confirmation.md`](reports/edl_confirmation.md) and [`reports/edl_recovery_notes.md`](reports/edl_recovery_notes.md)
-
----
-
-## XBL Sahara Protocol Analysis
-
-Analysis of `firmware-update/xbl.elf` revealed a functional Sahara protocol implementation and "DeviceProg lite" support.
-
-### Confirmed strings in `xbl.elf`
-- `Sahara: Hello pkt sent` (offset `0x002cd590`)
-- `Sahara: Hello Response Received`
-- `Sahara: Reset request received`
-- `sbl1_sahara.c`
-- `Entering DeviceProg lite` (offset `0x0003e510`)
-- `pmic DevPrg init`
-- `QUSB_BULK`, `QUSB_PORT_PRIM`
-- `qusb_ldr_utils_enable_eud_dep_qb`
-
-### Extracted candidate
-[`reports/firehose_search/xbl_melf_candidate.bin`](reports/firehose_search/xbl_melf_candidate.bin) (376 832 B, ELF64 AArch64)
-This is **XBLRamDump** - a Sahara protocol implementation with memory dump capability. It is **NOT** a Firehose loader and cannot be used for flashing.
-
-### EDL failsafe conditions (from XBL strings)
-- `fedl, pmi_not_detected`
-- `fedl, vbus_det_err`
-- `fedl, vbus_low`
-- `fedl, chgr_type_det_err`
-- `fedl, chgr_det_timeout`
-- `EDL: sbl1_dload_entry: dload_entry_count > 1`
-
----
-
-## 🎛️ MCU Firmware (BES2610)
-
-The `mcu_firmware/OPWWE251/` directory contains firmware for the Bestechnic BES2610 coprocessor (Cortex-M55 based RTOS):
-
-* `OPWWE251_M55C0_2505201801.bin` (6.34 MB) - Core 0 main RTOS binary
-* `OPWWE251_M55C1_2505201801.bin` (5.57 MB) - Core 1 secondary RTOS binary
-* `OPWWE251_SSHUB_2505201801.bin` (980.1 KB) - Sensor Subsystem Hub (SSHUB) firmware
-* `bootloader.bin` (254.1 KB) - MCU bootloader binary
-* `programmer.bin` (68.9 KB) - MCU flashing/programmer routine
-* `config.txt` - Memory and peripheral configuration descriptors
-* `symbols.txt` - Firmware symbol mapping
-
----
-
-## Security Model & Limitations
-
-This device has several restrictions that affect modding.
-
-| Aspect | Status | Impact |
-|---|---|---|
-| Bootloader Unlock | SUPPORTED (`ro.oem_unlock_supported=1`) | Official unlock supported via `fastboot flashing unlock`; wipes user data, voids warranty, disables Google Wallet / Play Integrity |
-| A/B slots | NONE (single-slot, A-only) | No fallback slot |
-| Recovery mode | LIMITED (OTA only) | Displays "No command", no interactive menu via button combos, auto-reboots after ~1 min |
-| Physical button combo | UNKNOWN | No confirmed fastboot trigger |
-| Engineer mode broadcast | `exported="false"` | Cannot trigger from shell |
-
-### 🔓 Critical Discovery: Bootloader Unlocking Supported (`ro.oem_unlock_supported=1`)
-
-Analysis of system build properties (`build_24965.prop`) reveals that **OEM bootloader unlocking is officially supported**:
-* **Property:** `ro.oem_unlock_supported=1` is explicitly set in firmware build properties.
-* **Unlock Command:** The standard Android Fastboot unlock command:
-  ```bash
-  fastboot flashing unlock
-  ```
-  is implemented in the Application Boot Loader (`abl.elf` / LinuxLoader PE binary `section1.pe`), which includes handlers for `flashing unlock` and `flashing get_unlock_ability`.
-* **AVB Bypass on Unlock:** When unlocked, ABL explicitly skips AVB verification:
-  ```
-  Device is unlocked, Skipping boot verification
-  ```
-  This allows booting modified `init_boot` (Magisk, KernelSU) or custom kernel images without VIP signature enforcement.
-* **Consequences of Unlocking:**
-  * **Complete Data Wipe:** Executing `fastboot flashing unlock` automatically triggers a cryptographic factory reset of `/data` (`userdata`).
-  * **Warranty Void:** Unlocking flags the bootloader tamper state and voids manufacturer warranty.
-  * **Google Wallet / Play Integrity Loss:** Permanently breaks hardware-backed Google Play Integrity / CTS verification, disabling NFC contactless payments (Google Wallet).
-
-Implications for modders:
-- **OEM Bootloader Unlock is supported** (`ro.oem_unlock_supported=1`); developers can unlock via `fastboot flashing unlock`, but this wipes userdata, voids warranty, and disables Google Wallet
-- Boot-time verification of `init_boot` is enforced by Android Verified Boot (AVB 2.0 / `vbmeta`) when locked; unlocking the bootloader instructs ABL to skip boot verification
-- Recovery mode exists exclusively for OTA package installation; manually entering it displays the "No command" screen, offers no interactive menu via button combinations, and auto-reboots back to the system after ~1 minute
-- A signed OFP service package exists (A.94+) containing `prog_firehose_ddr.elf` for full EDL unbricking
-- The Firehose loader is proprietary and private (not hosted in this repo); contact the community (XDA / [Discord](https://discord.gg/F4YK2YhFMc)) for recovery help
-- EDL flashing requires signed Firehose loader + Digest + Sign (VIP validation)
-
-> [!WARNING]
-> Do NOT flash without a confirmed recovery path.
-
----
-
-## Recovery / Unbrick Capability
-
-Important note on firmware recovery:
-
-A full official service package (OFP) exists for the OPWWE251 (A.94 and newer).
-This package contains everything needed to restore the device via EDL:
-- `prog_firehose_ddr.elf` - Qualcomm Firehose programmer
-- `ChainedTableOfDigests_*.bin` - Digest tables for VIP verification
-- `DigestsToSign_*.bin.mbn` - Signed digests for Secure Boot
-- `rawprogram*.xml` / `patch*.xml` - EDL flashing configuration
-- Full bootloader, MCU firmware, and system images
-
-These files are NOT included in this repository for legal reasons (they are proprietary service packages of OPPO/OnePlus).
-
-If your device is bricked:
-- Do NOT panic - EDL mode can restore the device if you have the full OFP.
-- Do NOT flash random images without the proper Firehose loader.
-- Contact the community (XDA, [Discord](https://discord.gg/F4YK2YhFMc)) for help obtaining the package.
-
-Project IDs and Hardware Revisions confirmed from firmware build properties (`build_24965.prop` & `build_24966.prop`):
-- `24965` - **OnePlus Watch 3** (`OPWWE251`), Hardware Revision `XK929`
-- `24966` - **OPPO Watch X2** (`OWWE251`), Hardware Revision `XK927`
-
----
-
-## Engineer Mode (Service Menu)
-
-The device ships with a full OnePlus/Oppo engineer mode (service menu).
-78 secret codes have been mapped from `engineer_order_list.xml`.
-
-Notable codes:
-| Code | Action |
-|------|--------|
-| `*#8020#` | Enable ADB over WiFi (`WifiAdbHelper`) |
-| `*#9434#` | Secrecy panel (ADB/LOG/APP state) |
-| `*#3644999#` | `RebootManager` (requires decrypt first) |
-| `*#649010#` | Enable Qualcomm Diag mode |
-| `*#8011#` | Reset ATM mode |
-| `*#8778#` | FACTORY RESET (`MasterClear`) - WARNING |
-| `*#*#700#` | Flash MCU (`McuUpgradeActivity`) - WARNING |
-
-Full engineer HAL API documented in [`reports/engineer_mode/`](reports/engineer_mode/):
-- `setPartionWriteProtectState(bool)` - Write protect control
-- `writeData()`, `readData()` - Raw partition access
-- `setProperties()` - System property modification
-- `loadSecrecyConfig()`, `saveSecrecyConfig()` - Secrecy config
-- `exportAttkKeyPair()`, `verifyAttkKeyPair()` - Attestation keys
-
-Security limitation:
-`EngineerModeOrderReceiver` is marked `android:exported="false"`, so the secret codes cannot be triggered from shell without system-level privileges.
-
-Full documentation: [`reports/engineer_mode/README.md`](reports/engineer_mode/README.md)
-
----
-
-## RTOS Analysis (BES2610)
-
-The Bestechnic BES2610 is a combo chip handling WiFi 6 (802.11ax), BT 5.x, and a full health/RTOS subsystem. The RTOS runs on two Cortex-M55 cores (`M55C0`, `M55C1`) plus a sensor hub (`SSHUB`).
-
-Health features found in RTOS firmware:
-- `heart_rate_app`, `heart_rate_notify_app` - Heart rate
-- `heart_rate_atrial_fibrillation_app` - AFib detection (region-locked)
-- `wrist_temperature` - Skin temperature
-- `step_complete`, `act_step_completed` - Step counter
-- `acc_gyro_ppg_sync` - PPG synchronized with IMU
-- GPS handled by M55 (`gps_gnss_service_sensor_send_m55_msg`)
-
-MCU protocol (64 commands):
-Documented in [`reports/mcu_protocol/mcu_commands.txt`](reports/mcu_protocol/mcu_commands.txt)
-
-RTOS bootloader:
-Contains full NOR flash programmer (`FLASH CMD`, `ERASE_DATA`, `BURN_DATA`, `VERIFY_DATA`) and `upg_mode_pin` for upgrade mode entry.
-
-See [`reports/rtos_analysis.md`](reports/rtos_analysis.md) for full protocol tables and reverse engineering details.
-
----
-
-## 🩺 Health Features
-
-Biometric tracking on the OnePlus Watch 3 is executed entirely at the RTOS level:
-- **Optical PPG (Heart Rate & SpO2):** Managed by SSHUB with active IMU motion artifact cancellation (`acc_gyro_ppg_sync`).
-- **Atrial Fibrillation (AFib) Detection:** Algorithmic detection present in RTOS (`heart_rate_atrial_fibrillation_app`), though geographically restricted in software (unavailable in Poland/EU consumer builds).
-- **Skin / Wrist Temperature:** High-precision medical thermistor array (`wrist_temperature`) sampled continuously during sleep.
-- **Pedometer & Step Counting:** Real-time cadence and step algorithms (`act_step_completed`) run 24/7 on M55C0.
-
-Because these features run on the BES2610 MCU, installing a custom Linux kernel or AOSP ROM on the Snapdragon AP does not break biometric sensing as long as kernel modules `oplus_comm_master.ko`, `oplus_snshub.ko`, and `bes2610.ko` are retained.
-
----
-
-## Hardware Architecture (4-Processor Design)
+The OnePlus Watch 3 utilizes a 4-processor hybrid architecture designed for extreme battery efficiency and responsiveness:
 
 | Processor | Role | Communication |
 |-----------|------|---------------|
-| Snapdragon W5+ Gen 1 | Application (Wear OS, Linux 5.15.170 GKI) | Main |
-| Bestechnic BES2610 | WiFi 6 + BT 5.x + RTOS (`M55C0`/`M55C1`) | SPI (`oplus_comm_master.ko`) |
-| SSHUB | Sensor Hub (PPG, IMU) | IPC to M55 |
-| Slate | Display / AOD | SPI (`slate_events_bridge.ko`) |
+| **Snapdragon W5+ Gen 1** (SW5100 / `monaco`) | Primary Application Processor (Wear OS, Linux 5.15 GKI) | Host |
+| **Bestechnic BES2610** (`M55C0` / `M55C1`) | WiFi 6 + BT 5.x + 24/7 RTOS Health & Coprocessor Subsystem | High-Speed SPI (`oplus_comm_master.ko`) |
+| **SSHUB** | Sensor Subsystem Hub (Optical PPG, IMU motion cancellation) | Internal IPC to M55 |
+| **Slate** | Display Controller & Always-On Display (AOD) Engine | SPI (`slate_events_bridge.ko`) |
 
-Key kernel modules:
-- `oplus_comm_master.ko` - Main IPC channel to BES2610
-- `oplus_comm_master_bt.ko` - BT communication
-- `oplus_snshub.ko` - Sensor hub driver
-- `bes2610.ko` - WiFi 6 cfg80211 driver (9,163 symbols)
-- `slate_events_bridge.ko` / `_rpmsg.ko` - Slate communication
-- `oplus_crown.ko` - Rotary crown (`mot6010` / `pat9125`)
-- `haptic.ko` - AW86927 with haptic audio support
-
-See [`reports/hardware_architecture.md`](reports/hardware_architecture.md) for complete bus diagrams, kernel bindings, and IPC protocols.
+### Confirmed Project IDs & Hardware Revisions
+* **OnePlus Watch 3 (`OPWWE251`):** Project ID **`24965`** (`ro.separate.soft=24965`), Hardware Revision **`XK929`** (`ro.product.hardware=XK929`), Brand `OnePlus` (`ro.oppo.market.name=OnePlus Watch`, `ro.product.display_name=OnePlus Watch 3`).
+* **OPPO Watch X2 (`OWWE251`):** Project ID **`24966`** (`ro.separate.soft=24966`), Hardware Revision **`XK927`** (`ro.product.hardware=XK927`), Brand `OPPO` (`ro.oppo.market.name=OPPO Watch`, `ro.product.display_name=OPPO Watch X2`).
 
 ---
 
-## Corrections to Earlier Documentation
+## 🔍 Major Reverse Engineering Discoveries
 
-| Earlier claim | Correction |
-|---------------|------------|
-| BES2800 | BES2610 (Bestechnic) |
-| BES2610 is sensor hub only | BES2610 = WiFi 6 + BT 5.x + RTOS sensor hub |
-| PM5100 = PixArt PMW5100 | PM5100 = Qualcomm PMIC (`qcom,pm5100-spmi`) |
-| PPG on Linux | PPG on RTOS (BES2610) |
+Comprehensive reverse-engineering of the bootloader, RTOS firmware, and kernel modules revealed several critical architectural mechanisms:
 
----
+1. **Auto-EDL Watchdog:** The secondary bootloader (XBL) tracks boot attempts via `dload_entry_count` (`0x0c29bbb0`). If the device fails to boot twice consecutively, XBL automatically forces Qualcomm Sahara Emergency Download mode (`05c6:9008`).
+2. **Hardware EDL Cable:** Shorting USB D+ to GND at power-on coupled with switching the MCU to smart mode forces EDL entry immediately (`qusb_pmi_check_edl_pin_trigger`).
+3. **VBUS Low Trigger:** Dropping the USB VBUS supply voltage below ~4.25V trips the PMIC comparator (`qusb_pmi_charger_detect_forced_edl`) and directs XBL into forced EDL.
+4. **BCB Fastbootd Support:** The Android Boot Loader (ABL) parses the Bootloader Control Block (`misc` partition). Writing `"boot-fastboot"` directly instructs the device to boot into userspace `fastbootd`.
+5. **Secure Boot is DISABLED on BES2610 RTOS:** The Cortex-M55 coprocessor firmware does **not** enforce cryptographic signature checks (`SEC_BOOT_EN` eFuse unblown). Custom RTOS code is possible requiring only CRC32 and the `0xBE57EC1C` header magic.
+6. **AFib Algorithm Unlock:** The Atrial Fibrillation detection engine exists fully formed inside RTOS firmware; restriction is enforced only at the Android userspace level and can be toggled via DCC Command 21 over `/dev/dcc_data`.
+7. **Complete IPC Protocol Documented:** 9 dedicated communication channels, 77 unique MCU commands, and character device interfaces (`/dev/ccch_*`, `/dev/dcc_data`) fully decoded.
+8. **Partition Write Protection is a Software Flag:** The `setPartionWriteProtectState` HAL API writes an 8-byte ASCII flag to offset `0x42d000` of `oplusreserve1` (pure software, no RPMB or PMIC registers).
+9. **Custom Haptic Waveforms:** The AW86927 haptic motor driver supports uploading custom vibration waveforms via `/sys/class/leds/vibrator/ram_update`.
+10. **Button Combination Audit:** Physical button combos are strictly handled by the PMIC PON block. Holding both buttons ~12s triggers a PMIC hardware power-cycle; holding a button 5s during early boot triggers Recovery (`keyPressed LP 5s, entry recovery`).
 
-## 📦 UEFI Firmware Volumes
-
-`abl.elf` and `imagefv.elf` are UEFI Firmware Volumes (signature `_FVH` / `FFS2`). Extracted contents are available in [`reports/uefi_extracted/`](reports/uefi_extracted/):
-
-* **`abl.elf` (LinuxLoader):**
-  * Extracted PE32 binary: `section1.pe` (593,924 bytes, PE32 image)
-  * Implements the Android Fastboot protocol, boot slot switching (`set_active _a` / `_b`), display panel selection, and `WriteRecoveryMessageEdl` recovery mechanism.
-* **`imagefv.elf` (Firmware UI):**
-  * Extracted splash bitmaps for bootloader recovery and diagnostics:
-    * `tsens_thermal_symbol.bmp` & `tsens_thermal_err_symbol.bmp` (Thermal warning indicators)
-    * `battery_symbol_DebugBoot.bmp` & `battery_symbol_DebugStay.bmp` (Battery debug indicators)
+> [!TIP]
+> Full reports, disassembled routines, and pseudo-code are available in the [`reports/`](reports/) directory. See [`reports/RE_ANALYSIS_INDEX.md`](reports/RE_ANALYSIS_INDEX.md) for the master index.
 
 ---
 
-## 🧩 Vendor Modules (`vendor_dlkm`)
+## 🔐 Bootloader, EDL & Recovery Deep-Dive
 
-The `vendor_dlkm` partition contains 137 loadable kernel modules (.ko) providing hardware-specific drivers for Android 14 GKI:
+### Bootloader Files Inventory (`firmware-update/`)
 
-| Category | Modules | Description |
-|---|---|---|
-| **TOUCH** | `focaltech_fts.ko`, `zinitix.ko` | FocalTech FTS & Zinitix BT541 dual-sourced touchscreen drivers |
-| **DISPLAY** | `msm_drm.ko`, `panel_event_notifier.ko` | Qualcomm DRM display controller and panel event notifications |
-| **GPU** | `msm_kgsl.ko` | Qualcomm Adreno GPU kernel graphics support layer |
-| **VIDEO** | `msm_video.ko` | Qualcomm hardware video encoder/decoder driver |
-| **COPROCESSOR** | `bes2610.ko`, `besbev_dlkm.ko`, `besbev-slave_dlkm.ko` | Bestechnic BES2610 11ax/RTOS driver, codec & slave interface |
-| **OPLUS_CUSTOM** | `oplus_crown.ko`, `oplus_comm_master.ko`, `oplus_comm_master_bt.ko`, `oplus_link_power.ko`, `oplus_shutdown_detect.ko`, `oplus_ddr_freq.ko`, `slate_events_bridge.ko` | Rotary crown input, inter-chip communication, power and event bridge |
-| **SENSORS_HEALTH**| `pmw5100-spmi_dlkm.ko`, `qcom-spmi-adc5*.ko`, `qti_qmi_sensor.ko` | PixArt PMW5100 optical PPG sensor, SPMI ADC, and Qualcomm QMI sensor client |
-| **SENSORS_THERMAL**| `msm-tsens-driver.ko`, `qcom_tsens.ko`, `qcom-spmi-temp-alarm.ko`, `thermal_pause.ko` | Thermal sensors, PMIC temperature alarm, and throttling controls |
-| **POWER_BATTERY** | `qti-qbg-main.ko`, `qpnp-smblite-main.ko`, `qpnp-power-on.ko`, `bcl_soc.ko`, `qti-pmic-lpm.ko`, `regulator_cdev.ko` | Qualcomm Battery Gauge, SMB Lite battery charger, power keys, and low-power modes |
-| **AUDIO** | `bolero_cdc_dlkm.ko`, `wsa883x_dlkm.ko`, `wcd_core_dlkm.ko`, `wcd9xxx_dlkm.ko`, `swr_dlkm.ko`, `snd_event_dlkm.ko`, `spf_core_dlkm.ko`, `slimbus.ko` | Qualcomm Bolero audio codec, WSA883x smart amp, SoundWire, and SPF core |
-| **SECURITY** | `qseecom_dlkm.ko`, `smcinvoke_dlkm.ko`, `qcrypto-msm_dlkm.ko`, `qce50_dlkm.ko`, `tz_log_dlkm.ko`, `qrng_dlkm.ko` | Qualcomm TrustZone / QSEE interface, crypto engine, hardware RNG, and TZ logging |
-| **WIRELESS** | `cfg80211.ko`, `bluesleep.ko`, `dummy_nfc.ko` | Linux wireless 802.11 configuration subsystem, Bluetooth sleep driver |
-| **INTERCONNECT** | `glink_pkt.ko`, `gpr_dlkm.ko`, `qmi_helpers.ko`, `qrtr-smd.ko`, `pdr_interface.ko` | Qualcomm GLink packet transport, IPC router, and QMI messaging helpers |
-| **I2C_SPI_UART** | `i2c-msm-geni.ko`, `spi-msm-geni.ko`, `msm_geni_serial.ko`, `msm_gpi.ko` | Qualcomm Generic Interface (GENI) high-speed serial, I2C, SPI engines |
-| **STORAGE & USB** | `sps_drv.ko`, `usb_bam.ko`, `usb_f_*.ko` | Smart Peripheral Subsystem (SPS) DMA and USB gadget endpoints |
-| **CLOCK_CC** | `debugcc-monaco.ko`, `gpucc-monaco.ko` | Platform clock controllers for Monaco GPU and debug subsystems |
-| **INFRASTRUCTURE**| `haptic.ko`, `bam_dma.ko`, `bwmon.ko`, `core_hang_detect.ko`, `cpufreq_*.ko`, `frpc-adsprpc.ko`, `stm_core.ko` | Haptic vibration motor, bus bandwidth monitoring, FastRPC ADSP, system trace |
+| File | Size | Format | Description |
+|---|---|---|---|
+| `xbl.elf` | 2.8 MB | ELF | eXtended Boot Loader (SBL1) - contains Sahara & forced EDL failsafes |
+| `abl.elf` | 263 KB | UEFI FV | Application Boot Loader (`section1.pe` LinuxLoader / fastboot) |
+| `xbl_config.elf` | 24 KB | ELF | XBL DDR and platform configuration |
+| `devcfg_msm_ddr.mbn` | 38 KB | ELF | Device Config (TLMM GPIO, clock, and auth settings) |
+| `qupv3fw.elf` | 58 KB | ELF | QUP v3 serial bus engine firmware |
+| `rpm.mbn` | 244 KB | MBN | Resource Power Manager firmware |
+| `hyp.mbn` | 354 KB | MBN | Qualcomm Type-1 Hypervisor |
+| `tz.mbn` | 2.9 MB | MBN | TrustZone / QSEE security kernel |
+| `keymint.mbn` | 326 KB | MBN | Hardware Keymint / Keymaster enclave |
+| `imagefv.elf` | 16 KB | UEFI FV | Image Firmware Verification & splash UI bitmaps |
+| `uefi_sec.mbn` | 118 KB | MBN | UEFI Security verification module |
+| `NON-HLOS.bin` | 33 MB | FAT | Baseband modem firmware image |
+| `dspso.bin` | 64 MB | ELF | Hexagon DSP firmware image |
+| `dtbo.img` | 10 MB | DTBO | Board variant Device Tree Overlays |
+| `vbmeta.img` | 12 KB | VBMETA | Android Verified Boot (AVB 2.0) root descriptor |
+| `vbmeta_system.img` | 4 KB | VBMETA | System partition AVB 2.0 metadata |
 
 ---
 
-## ⚡ Vendor Early-Boot Modules (`vendor_boot`)
+### EDL Entry & Failsafe Mechanisms
 
-The `vendor_boot` ramdisk contains 212 modules required during early userspace initialization before the dynamic partitions are mounted:
+Software and hardware EDL access has been empirically confirmed:
+* **USB VID:PID:** `05c6:9008` (Qualcomm Gobi QDL).
+* **Software Trigger:** `adb reboot bootloader` followed by `fastboot oem edl`.
+* **Hardware Trigger (EDL Cable):** Short D+ to GND on boot, signal MCU to switch to smart mode.
+* **Auto-Timeout:** ~10 seconds before handshake; once the Sahara handshake completes, the session stays open indefinitely without timing out.
+* **Exit:** Hold both buttons for ~12 seconds to force a PMIC Stage 2 hardware reboot.
 
-| Module | Subsystem / Function |
-|---|---|
-| `arm_smmu.ko` | ARM System MMU (IOMMU) driver for memory virtualization |
-| `oplus_snshub.ko` | OPlus Sensor Subsystem Hub interface driver |
-| `bes2610.ko` | Bestechnic BES2610 early boot co-processor link |
-| `qpnp-smblite-main.ko` | Early battery charger initialization |
-| `qti-qbg-main.ko` | Early battery fuel gauge reading |
-| `qcom_glink_rpm.ko` / `qcom_glink_smem.ko` | Qualcomm GLink IPC over shared memory and RPM communication |
-| `sdhci-msm.ko` / `sdhci-msm-scaling.ko` | Qualcomm SDHCI / eMMC storage controller driver |
-| `spmi-pmic-arb.ko` | System Power Management Interface (SPMI) bus arbiter |
-| `sched-walt.ko` | Qualcomm Window-Assisted Load Tracking (WALT) CPU scheduler |
-| `qcom_ramdump.ko` / `qcom_sysmon.ko` | Subsystem monitoring, crash detection, and RAM dump facilities |
+---
+
+### Complete EDL Flash Protocol & The Two Missing Packets
+
+Full reverse-engineering of the EDL flashing stream for OPWWE251 revealed the protocol pipeline:
+* **Protocol:** Qualcomm Firehose + OPPO VIP (Validated Image Programming) + Secure Boot.
+* **Packet Stream:** ~4,235 packets are required for a complete Android-side restoration.
+* **Reproducibility:** 4,233 of the 4,235 packets are byte-reproducible directly from the stock OFP service package.
+
+#### The Two Missing Packets:
+1. **Packet 4 (`flash-sign`):** Per-firmware authorization token generated dynamically by OPPO's online signing service. Sent after `<verify>`, immediately preceding GPT patching.
+   - A.94: `445b937d961b24639d3faf8003631b328f45fc7d873875ede69dd1403bd76dbd`
+   - A.108: `6d56a50fcb3f556ff85870532dfa7499af8626cff7cf2302978bf9f5b5dd8057`
+2. **Packet 8 (`signed CDT`):** 1024-byte signed Cellular Device Table ("OSIG") that is firmware-independent and valid across all OPWWE251 devices.
+   - SHA-256: `4672bd0f78688267e0e581520f1fcaedf960a41e634287705d776bf5b9ea7b82`
+
+Both packets are generated at flash-time by OPPO's OCSM/WCSM backend and discarded immediately; neither is stored in any OFP or OTA archive. However, because these tokens are **device-independent**, capturing a single set of packets from an authorized flash session unlocks offline EDL unbricking for every OnePlus Watch 3.
+
+> [!NOTE]
+> See [`reports/edl_complete_analysis.md`](reports/edl_complete_analysis.md) for the full protocol analysis and replay pipeline architecture.
+
+---
+
+### Fastboot Accessibility on Bricked Devices
+
+On a hard-bricked OnePlus Watch 3, Fastboot cannot be reached via hardware buttons:
+* **Reboot Reason Dependency:** The ABL fastboot handler executes only if an explicit reboot-reason cookie is present in RAM or set via the `misc` BCB partition.
+* **Suppressed Menu UI:** While ABL contains navigation handlers for Fastboot Menu items (`START`, `Restart bootloader`, `Recovery`, `Power off`), the menu display is hard-coded as disabled (`"Display menu is not enabled!"`).
+* **EDL Limitations:** Firehose does not support rebooting directly into Fastboot mode; write operations to set reboot cookies are blocked without VIP authentication.
+
+> [!NOTE]
+> See [`reports/fastboot_analysis.md`](reports/fastboot_analysis.md) and [`reports/button_combo_findings.md`](reports/button_combo_findings.md).
+
+---
+
+### Secure Boot & eFuse Analysis
+
+* **Snapdragon W5+ Gen 1 Status:** Statically undecidable (eFuses are read at runtime by TrustZone via SMC `0x82000119`).
+* **Evidence Leaning Toward Unblown (~50–60% Chance of Bypass):**
+  - `SEC_BOOT_EN` bit 0 = 0 (`SecurityFlag = 0xC4`).
+  - `devcfg` parameters `OEM_rot_enable_transfer_APPS = 0` and `OEM_rot_pk_hash1_fuse_values = 0`.
+* **Evidence for Blown:** OTA update archives include the full signing verification stack (`qcom.tz.uefisecapp`).
+* **BES2610 eFuse:** Secure boot is unblown on the BES2610 coprocessor; however, this is an independent chip and does not affect the Snapdragon application processor.
+
+> [!NOTE]
+> See [`reports/secure_boot_efuse_analysis.md`](reports/secure_boot_efuse_analysis.md).
+
+---
+
+### CVE-2026-25262 Vulnerability Analysis: Dead End
+
+Analysis of the reported Qualcomm Sahara write-what-where vulnerability confirmed that it **does not apply** to the OPWWE251:
+* **Encrypted Firehose:** `prog_firehose_ddr.elf` has an entropy of 7.93 bits/byte (no ELF header magic, no plain text strings).
+* **Patched XBL:** The Sahara handler (`FUN_45e36a68`) utilizes a fixed `0x400` buffer with strict packet size bounds checking.
+* **False Positive Check:** The `[x+0x38] -> cmp #5` instruction sequence matches the BGCOM SPI bridge for the BES2610 coprocessor, not authentication logic.
+* **PBL Inaccessibility:** Primary Boot Loader code resides in on-chip masked ROM and cannot be inspected statically.
+
+> [!NOTE]
+> See [`reports/cve_2026_25262_analysis.md`](reports/cve_2026_25262_analysis.md).
+
+---
+
+### OplusFlashTool Protocol Analysis
+
+Reverse engineering of the factory service tool (`OplusFlashTool`) documented the remote authentication flow:
+* **Server Endpoints:** OCSM (`api.myoas.com/asymes/service/secLoginExt.json`), WCSM (`service-{sg,eu,in-wcsm}.myoppo.com`), and CRMNA (`crmna.oneplus.com`).
+* **Cryptographic Keys:** `auth.pub` contains 57 platform RSA-2048 keys (no entry for Monaco / W5+); `nv_ecdsa.pub` contains ECDSA P-384.
+* **Binary Hardening:** `FTLibBase.dll` is protected with VMProtect (`.vmp0`/`.vmp1`, entropy 7.97).
+* **Signing Flow:** Packet 4 (`execGetSignData`) and Packet 8 (`execWriteCdtData`) are calculated server-side after engineer credentials are authenticated.
+
+> [!NOTE]
+> See [`reports/oplus_flashtool_analysis.md`](reports/oplus_flashtool_analysis.md).
+
+---
+
+## 🔓 Security Model & Bootloader Unlocking
+
+### Official Bootloader Unlock Supported (`ro.oem_unlock_supported=1`)
+
+Analysis of system build properties (`build_24965.prop`) confirms that OEM unlocking is officially supported:
+* **Property:** `ro.oem_unlock_supported=1`.
+* **Fastboot Command:**
+  ```bash
+  fastboot flashing unlock
+  ```
+* **AVB Bypass on Unlock:** When the device is unlocked, ABL explicitly bypasses Android Verified Boot (AVB 2.0) verification:
+  ```text
+  Device is unlocked, Skipping boot verification
+  ```
+  This allows booting modified `init_boot` images (Magisk, KernelSU) and custom GKI kernels.
+* **Consequences of Unlocking:**
+  - **Data Wipe:** Automatically triggers a cryptographic factory reset of `/data`.
+  - **Google Wallet / Play Integrity Loss:** Permanently breaks hardware-backed Play Integrity, disabling NFC Google Wallet payments.
+  - **Warranty Void:** Flags the tamper state in bootloader parameters.
+
+---
+
+## 🎛️ MCU Firmware, RTOS & Health Subsystems (BES2610)
+
+The Bestechnic BES2610 coprocessor runs an RTOS across dual Cortex-M55 cores and manages all low-power tasks:
+
+### RTOS Firmware Files (`mcu_firmware/OPWWE251/`)
+* `OPWWE251_M55C0_2505201801.bin` (6.34 MB) - Core 0 main RTOS binary.
+* `OPWWE251_M55C1_2505201801.bin` (5.57 MB) - Core 1 secondary RTOS binary.
+* `OPWWE251_SSHUB_2505201801.bin` (980.1 KB) - Sensor Subsystem Hub firmware.
+* `bootloader.bin` (254.1 KB) & `programmer.bin` (68.9 KB) - MCU flashing and bootstrap code.
+
+### Biometrics & AFib Unlock
+Biometric sensing runs autonomously on the BES2610:
+* **Supported Algorithms:** Heart rate, continuous SpO2, sleep tracking, OSA (Sleep Apnea), wrist temperature, pedometer, and AFib (Atrial Fibrillation).
+* **AFib Enablement:** The detection engine is dormant in EU/Poland builds due to software licensing. It can be activated by writing a 16-byte packet to `/dev/dcc_data` (DCC Module `0x3F`, Command ID `21` `APP_MCU_SET_FC_IRREGULARY_HEART_WARN_SW`):
+  ```hex
+  01 00 08 00 3F 00 01 00 15 00 04 00 01 00 00 00
+  ```
+
+### Inter-Processor Communication (IPC) Protocol
+* **Physical Layer:** High-speed SPI interconnect managed by `oplus_comm_master.ko`.
+* **Channels (9 Total):** `dcc_data` (`0x01`), `mcu_factory` (`0x02`), `gps_data` (`0x03`), `std_sns` (`0x04`), `dcc_datah` (`0x07`), `whs` (`0x0b`), `haptic` (`0x0d`), `audiok` (`0x0e`), `audioh` (`0x10`).
+* **Frame Format:** CRC16 (2B) + Sequence (2B) + Type (1B) + Count (1B) + Length (2B) + Payload.
+* **Commands:** 77 unique `MCU_*` commands documented in [`reports/ipc_protocol/bes2610_findings.md`](reports/ipc_protocol/bes2610_findings.md).
+
+---
+
+## 🔬 Hardware Components & Peripheral Mapping
+
+* **Touchscreen (Dual-Sourced):**
+  * FocalTech FTS (`focaltech_fts.ko`, I2C `0x38`) & Zinitix BT541 (`zinitix.ko`, I2C `0x20`). Shared IRQ GPIO TLMM 13, Reset GPIO TLMM 12.
+* **Display & Graphics:**
+  * Chipone ICNA3311 (466x466) & FocalTech FT2390 AMOLED via MIPI DSI Command Mode (`msm_drm.ko`).
+* **Rotary Crown (Encoder):**
+  * Mixosense MOT6010 (`0x74`) & PixArt PAT9125 (`0x75`) on IRQ GPIO TLMM 56 (`oplus_crown.ko`).
+* **Haptic Motor:**
+  * Awinic AW86927 driver (`haptic.ko`) with 31 built-in waveforms and RTP real-time audio-to-haptics streaming.
+* **Power Management:**
+  * Qualcomm PM5100 PMIC over SPMI, Battery Gauge (`qti-qbg-main.ko`), and SMB Lite Charger (`qpnp-smblite-main.ko`).
+
+---
+
+## 🧩 Kernel & Dynamic Vendor Modules
+
+* **Reconstructed Kernel Symbols:** [`extracted_images/kernel_with_symbols.elf`](extracted_images/kernel_with_symbols.elf) contains **141,777 unstripped symbols** reconstructed from the GKI Linux 5.15.170 kernel.
+* **Dynamic Modules (`vendor_dlkm`):** 137 dynamic `.ko` modules covering touch, display, wireless (WiFi 6 `bes2610.ko`), audio, and security.
+* **Early-Boot Modules (`vendor_boot`):** 212 ramdisk drivers including `arm_smmu.ko`, `oplus_snshub.ko`, and `qpnp-smblite-main.ko`.
 
 ---
 
 ## 🛠️ Included Automation & Analysis Scripts
 
-1. **[`scripts/analyze_modules.sh`](scripts/analyze_modules.sh):**
-   * Inspects all `.ko` kernel modules in a directory using `nm`, `modinfo`, `file`, and `readelf`.
-   * Outputs symbol counts, metadata, and generates a structured CSV report.
-2. **[`scripts/extract_dlkm.sh`](scripts/extract_dlkm.sh):**
-   * Automates clean ext4 extraction of `vendor_dlkm.img` using `debugfs -R "rdump / ..."` with fallback mechanisms.
-3. **[`scripts/verify_kernel.sh`](scripts/verify_kernel.sh):**
-   * Performs an automated symbol and driver presence audit on `kernel_with_symbols.elf`.
-4. **[`extract_ota.py`](extract_ota.py):**
-   * Performs memory-efficient decompression of `*.new.dat.br` partitions to `*.img`.
-5. **[`analyze_firmware.py`](analyze_firmware.py):**
-   * Unpacks partitions, indexes low-level firmware binaries, and analyzes HAL services.
-6. **[`decompile_kernel_dtb.py`](decompile_kernel_dtb.py):**
-   * Reconstructs `kernel_with_symbols.elf` via `vmlinux-to-elf` and decompiles DTBs to `.dts`.
-7. **[`sdat2img.py`](sdat2img.py):**
-   * Converts Android sparse data format (`sdat`) to filesystem image.
-
----
-
-## 🚀 How to Run the Pipeline
-
-### Prerequisites
-* Linux environment (Ubuntu / Debian / Arch Linux)
-* Python 3.10+
-* Required packages: `brotli`, `requests`, `vmlinux-to-elf`, `device-tree-compiler` (`dtc`), `7z`, `e2fsprogs` (`debugfs`), `binutils` (`nm`, `readelf`), `kmod` (`modinfo`), `uefi-firmware-parser`.
-
-### Execution
-```bash
-# 1. Unpack raw OTA payload files to .img partitions
-python3 extract_ota.py
-
-# 2. Extract vendor/system dumps, analyze HAL services and extract kernel
-python3 analyze_firmware.py
-
-# 3. Rebuild ELF symbols and decompile Device Tree sources
-python3 decompile_kernel_dtb.py
-
-# 4. Extract and analyze vendor DLKM kernel modules
-./scripts/extract_dlkm.sh
-./scripts/analyze_modules.sh
-./scripts/verify_kernel.sh
-```
+1. **[`scripts/analyze_modules.sh`](scripts/analyze_modules.sh):** Audits and indexes all vendor `.ko` modules into CSV.
+2. **[`scripts/extract_dlkm.sh`](scripts/extract_dlkm.sh):** Automates clean ext4 extraction of `vendor_dlkm.img` via `debugfs`.
+3. **[`scripts/verify_kernel.sh`](scripts/verify_kernel.sh):** Verifies symbols and driver presence in `kernel_with_symbols.elf`.
+4. **[`extract_ota.py`](extract_ota.py):** Unpacks and decompresses `*.new.dat.br` partitions to `.img`.
+5. **[`analyze_firmware.py`](analyze_firmware.py):** Indexes low-level firmware binaries and dumps HAL services.
+6. **[`decompile_kernel_dtb.py`](decompile_kernel_dtb.py):** Reconstructs kernel symbols and decompiles DTBs to `.dts`.
+7. **[`sdat2img.py`](sdat2img.py):** Converts Android sparse image formats to raw filesystem images.
 
 ---
 
 ## 💬 Community & Support
 
-Have questions, need EDL unbricking assistance, or want to collaborate on reverse-engineering the OnePlus Watch 3 / OPPO Watch X2?
+Have questions, need unbricking assistance, or want to collaborate on OnePlus Watch 3 / OPPO Watch X2 reverse engineering?
 
 [![Join Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/F4YK2YhFMc)
 
@@ -505,111 +268,6 @@ Join the discussion on Discord: **[https://discord.gg/F4YK2YhFMc](https://discor
 ---
 
 ## 📄 License & Attribution
-* Device firmware and vendor binaries are intellectual property of OnePlus / OPlus / Qualcomm / Bestechnic.
-* Provided strictly for educational, interoperability, and reverse-engineering research purposes under fair use.
 
----
-
-## Reverse Engineering Analysis (New)
-
-We have completed a comprehensive reverse engineering analysis of the
-OnePlus Watch 3 firmware. Full reports are in `reports/`.
-
-### Major Discoveries
-
-1. **Auto-EDL watchdog**: device enters EDL automatically after 2 failed boots
-2. **EDL cable works**: short D+ to GND at boot forces EDL
-3. **VBUS low triggers EDL**: threshold ~4.25V on PMIC comparator
-4. **BCB supports boot-fastboot**: write "boot-fastboot" to misc for fastbootd
-5. **Secure Boot is DISABLED on BES2610**: custom RTOS firmware is possible
-6. **AFib unlock**: algorithm exists in RTOS, can be enabled via IPC
-7. **Full IPC protocol documented**: 9 channels, 77 commands
-8. **Write protect is a software flag**: in oplusreserve1 partition
-9. **Custom haptic waveforms**: possible via sysfs
-
-### Important for Modders
-
-- **Magisk is now SAFE**: auto-EDL failsafe means bootloop is recoverable
-- **Unlocking bootloader = losing Google Wallet**
-- **Full OFP package exists** for EDL recovery
-- **Bootloader unlock supported**: ro.oem_unlock_supported=1
-
-See `reports/RE_ANALYSIS_INDEX.md` for full details.
-
----
-
-## EDL Analysis (Complete)
-
-We have fully reverse-engineered the EDL flash process for OPWWE251.
-
-**EDL Entry:** Short D+ to GND, switch MCU to smart mode → EDL (05c6:9008).
-Session holds after Sahara handshake, no timeout.
-
-**Protocol:** firehose + VIP + secure boot. ~4235 packets for Android-side restore.
-
-**Missing Pieces:** 2 packets not in OFP:
-- Packet 4 (flash-sign) - per firmware
-- Packet 8 (signed CDT) - firmware-independent
-- Both generated by OPPO's signing server at flash time, never stored
-
-**Device-Independent:** One capture unlocks every Watch 3 (project 24965).
-
-**What We Need:** Someone with WCSM/OCSM access to capture the 2 packets.
-
-See `reports/edl_complete_analysis.md` for details.
-
----
-
-## CVE-2026-25262 - Dead End
-
-Firehose is encrypted (entropy 7.93). XBL Sahara is patched. PBL is unavailable.
-CVE does not apply to Watch 3.
-
-See `reports/cve_2026_25262_analysis.md`.
-
----
-
-## Secure Boot eFuse - Unknown
-
-Statically undecidable. Evidence leans toward unblown.
-Requires hardware test on sacrificial unit.
-
-See `reports/secure_boot_efuse_analysis.md`.
-
----
-
-## Fastboot Unreachable on Brick
-
-ABL fastboot menu needs reboot-reason cookie. EDL has no reset-to-fastboot.
-MCU protocol has no fastboot. Button combos don't exist.
-
-See `reports/fastboot_analysis.md`.
-
----
-
-## OplusFlashTool Analysis
-
-Endpoints, keys, packet flow documented.
-FTLibBase.dll is VMProtect-packed.
-Signing is server-side.
-
-See `reports/oplus_flashtool_analysis.md`.
-
----
-
-## What Works and What Doesn't
-
-**Works:**
-- Fastboot flash (with unlocked bootloader, from running system)
-- Magisk root (confirmed on Watch 2)
-- Custom kernel (sources available)
-- EDL read (printgpt, edl r)
-- Auto-EDL failsafe (2 failed boots → EDL)
-
-**Doesn't Work:**
-- EDL flash (needs 2 signed packets from OPPO)
-- Fastboot on brick (no button combo)
-- CVE bypass (patched)
-- Mainboard swap (only official option, ~600-1000 PLN)
-
-
+* Device firmware, vendor binaries, and proprietary descriptors are intellectual property of OnePlus, OPlus, Qualcomm, and Bestechnic.
+* Documentation, scripts, and reverse-engineering findings are provided strictly for educational, interoperability, and research purposes under fair use.
