@@ -1,12 +1,39 @@
 # OnePlus Watch 3 (OPWWE251) Firmware Analysis & DTS Dump
 
-[![Firmware Build](https://img.shields.io/badge/Build-OPWWE251__11__A.165-blue.svg)](https://github.com)
+[![Firmware Build](https://img.shields.io/badge/Build-OPWWE251__11__A.127-blue.svg)](https://github.com)
 [![Platform](https://img.shields.io/badge/SoC-Qualcomm_Snapdragon_W5+_Gen_1_(Monaco)-green.svg)](https://www.qualcomm.com)
 [![Co--processor](https://img.shields.io/badge/MCU-Bestechnic_BES2610-orange.svg)](https://www.bestechnic.com)
 [![Android](https://img.shields.io/badge/OS-Wear_OS_(Android_14_GKI)-brightgreen.svg)](https://source.android.com)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?logo=discord&logoColor=white)](https://discord.gg/F4YK2YhFMc)
 
 A comprehensive reverse-engineering, firmware extraction, and device-tree decompilation repository for the **OnePlus Watch 3 (OPWWE251)** smartwatch.
+
+---
+
+## Firmware Version & Scope
+
+Everything in this repository was extracted from the **full OTA package of build `OPWWE251_11_A.127`**:
+
+| Property | Value |
+|---|---|
+| OTA version | `OPWWE251_11.A.127_1270_202505202143` |
+| Display ID | `OPWWE251_11_A.127` (`OPWWE251_11_A.127_250520`) |
+| Build date | 2025-05-20 |
+| Security patch level | 2025-05-01 |
+| Linux kernel | **5.15.170**-android14-11 |
+| Package type | Full OTA (complete `*.new.dat.br` partition payloads) |
+
+> [!IMPORTANT]
+> **There is no `A.165` dump in this repository, and none can be produced from the published update.** The newer public build **`OPWWE251_11_A.165`** runs Linux **5.15.185**, but OnePlus ships it as an **incremental (delta) OTA**: the package carries only block-level patches against the previously installed build, not full partition images. There is therefore nothing to decompress or extract from it.
+>
+> Consequences:
+>
+> - Every firmware artifact here (kernel 5.15.170, `system`/`vendor`/`product` images, DTS, kernel modules, RTOS blobs) belongs to **A.127**, not to A.165.
+> - Analyzing **A.165 / 5.15.185** requires a device-side pull (`dd` / `edl r` of the running partitions) or a full OTA package; an incremental update is not sufficient.
+> - Findings such as the kernel symbol count, module inventory, and driver audit hold for **A.127** only until re-verified on A.165.
+
+> [!TIP]
+> Exact build fingerprints, artifact-by-artifact coverage, and the incremental-OTA explanation are catalogued in [`reports/firmware_versions.md`](reports/firmware_versions.md).
 
 ---
 
@@ -61,7 +88,7 @@ Comprehensive reverse-engineering of the bootloader, RTOS firmware, and kernel m
 10. **Button Combination Audit:** Physical button combos are strictly handled by the PMIC PON block. Holding both buttons ~12s triggers a PMIC hardware power-cycle; holding a button 5s during early boot triggers Recovery (`keyPressed LP 5s, entry recovery`).
 
 > [!TIP]
-> Full reports, disassembled routines, and pseudo-code are available in the [`reports/`](reports/) directory. See [`reports/RE_ANALYSIS_INDEX.md`](reports/RE_ANALYSIS_INDEX.md) for the master index.
+> Full reports, disassembled routines, and pseudo-code are available in the [`reports/`](reports/) directory. See [`reports/RE_ANALYSIS_INDEX.md`](reports/RE_ANALYSIS_INDEX.md) for the master index and [`reports/firmware_versions.md`](reports/firmware_versions.md) for build/kernel coverage.
 
 ---
 
@@ -112,6 +139,8 @@ Full reverse-engineering of the EDL flashing stream for OPWWE251 revealed the pr
 1. **Packet 4 (`flash-sign`):** Per-firmware authorization token generated dynamically by OPPO's online signing service. Sent after `<verify>`, immediately preceding GPT patching.
    - A.94: `445b937d961b24639d3faf8003631b328f45fc7d873875ede69dd1403bd76dbd`
    - A.108: `6d56a50fcb3f556ff85870532dfa7499af8626cff7cf2302978bf9f5b5dd8057`
+   - A.127: not captured (build dumped in this repository)
+   - A.165: unobtainable from the update package, which is incremental-only
 2. **Packet 8 (`signed CDT`):** 1024-byte signed Cellular Device Table ("OSIG") that is firmware-independent and valid across all OPWWE251 devices.
    - SHA-256: `4672bd0f78688267e0e581520f1fcaedf960a41e634287705d776bf5b9ea7b82`
 
@@ -239,7 +268,7 @@ Biometric sensing runs autonomously on the BES2610:
 
 ## 🧩 Kernel & Dynamic Vendor Modules
 
-* **Reconstructed Kernel Symbols:** [`extracted_images/kernel_with_symbols.elf`](extracted_images/kernel_with_symbols.elf) contains **141,777 unstripped symbols** reconstructed from the GKI Linux 5.15.170 kernel.
+* **Reconstructed Kernel Symbols:** [`extracted_images/kernel_with_symbols.elf`](extracted_images/kernel_with_symbols.elf) contains **141,777 unstripped symbols** reconstructed from the **A.127** GKI Linux **5.15.170** kernel. The incremental-only A.165 build ships Linux 5.15.185 and is not represented here.
 * **Dynamic Modules (`vendor_dlkm`):** 137 dynamic `.ko` modules covering touch, display, wireless (WiFi 6 `bes2610.ko`), audio, and security.
 * **Early-Boot Modules (`vendor_boot`):** 212 ramdisk drivers including `arm_smmu.ko`, `oplus_snshub.ko`, and `qpnp-smblite-main.ko`.
 

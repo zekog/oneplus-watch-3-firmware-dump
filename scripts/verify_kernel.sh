@@ -19,13 +19,21 @@ echo "[*] Verifying driver symbols in $KERNEL_ELF..."
 TOTAL_SYMBOLS=$(nm "$KERNEL_ELF" 2>/dev/null | wc -l || echo 0)
 echo "[+] Total symbols extracted: $TOTAL_SYMBOLS"
 
+# Derive the kernel release from the ELF itself so the audit report always
+# describes the image that was actually analysed (A.127 ships 5.15.170; the
+# incremental-only A.165 build ships 5.15.185 and has no dump here).
+KERNEL_RELEASE=$(strings "$KERNEL_ELF" 2>/dev/null \
+    | grep -m1 -oE '[0-9]+\.[0-9]+\.[0-9]+-android[0-9]+-[0-9]+[^ ]*' || true)
+KERNEL_RELEASE="${KERNEL_RELEASE:-unknown}"
+
 cat <<EOF > "$OUTPUT_TXT"
 ================================================================================
 OnePlus Watch 3 (OPWWE251) - GKI Kernel Symbol & Driver Audit Report
 Target: $KERNEL_ELF
+Firmware Build: OPWWE251_11_A.127 (A.165 is incremental-only, not dumped)
 Total Symbols in ELF: $TOTAL_SYMBOLS
 Architecture: AArch64 (ARM64)
-Kernel: Linux 5.15.170-android14-11 (Generic Kernel Image / GKI)
+Kernel: Linux $KERNEL_RELEASE (Generic Kernel Image / GKI)
 ================================================================================
 
 1. ARCHITECTURAL SUMMARY

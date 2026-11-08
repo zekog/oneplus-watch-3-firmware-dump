@@ -205,6 +205,47 @@ def scan_hal_services_and_libs(vendor_dump: Path):
     return results
 
 
+def detect_firmware_build(images_dir: Path) -> dict:
+    """
+    Reads Android build properties from the extracted system image so the report
+    is tied to the exact OTA build that was unpacked.
+
+    Only full OTA builds can be unpacked here. Incremental (delta) OTAs such as
+    OPWWE251_11_A.165 contain block patches only and yield no partition images.
+    """
+    info = {
+        "display_id": "unknown",
+        "ota_version": "unknown",
+        "build_date": "unknown",
+        "security_patch": "unknown",
+    }
+
+    props = [
+        images_dir / "system_dump" / "system" / "build_24965.prop",
+        images_dir / "system_dump" / "system" / "build.prop",
+    ]
+
+    merged = {}
+    for prop_file in props:
+        if not prop_file.exists():
+            continue
+        try:
+            for raw in prop_file.read_text(encoding="utf-8", errors="replace").splitlines():
+                line = raw.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, _, value = line.partition("=")
+                merged.setdefault(key.strip(), value.strip())
+        except Exception:
+            continue
+
+    info["display_id"] = merged.get("ro.build.display.full_id") or merged.get("ro.build.display.id", "unknown")
+    info["ota_version"] = merged.get("ro.build.version.ota", "unknown")
+    info["build_date"] = merged.get("ro.build.date", "unknown")
+    info["security_patch"] = merged.get("ro.build.version.security_patch", "unknown")
+    return info
+
+
 def unpack_boot_and_kernel(magiskboot_bin: Path, images_dir: Path):
     """
     Uses magiskboot to unpack init_boot.img and boot.img.
@@ -296,6 +337,15 @@ def generate_report(output_file: Path, firmware_list: list, hal_data: dict, kern
     lines.append("• RTOS Co-processor : Bestechnic BES2610 (Dual-core Cortex-M55 + HiFi4 DSP / SSHUB)")
     lines.append("• OS Version        : Android 14 (Wear OS 4 / 5) - boot image header v4 (GKI)")
     lines.append("• Userspace ABI     : ARM 32-bit (armeabi-v7a) with ARM64 Linux Kernel")
+    build = kernel_info.get("build_info") or {}
+    lines.append(f"• Firmware Build    : {build.get('display_id', 'unknown')}")
+    lines.append(f"• OTA Version       : {build.get('ota_version', 'unknown')}")
+    lines.append(f"• Build Date        : {build.get('build_date', 'unknown')}")
+    lines.append(f"• Security Patch    : {build.get('security_patch', 'unknown')}")
+    lines.append("")
+    lines.append("  Scope note: this report covers the full-OTA build above. The newer")
+    lines.append("  OPWWE251_11_A.165 build (Linux 5.15.185) is shipped as an incremental")
+    lines.append("  update only and is therefore NOT represented by these artifacts.")
     lines.append("")
 
     # 2. Kernel Unpacking Status
@@ -421,6 +471,7 @@ def main():
     # Step 4: Extract kernel with magiskboot
     magiskboot_bin = ensure_magiskboot()
     kernel_info = unpack_boot_and_kernel(magiskboot_bin, images_dir)
+    kernel_info["build_info"] = detect_firmware_build(images_dir)
 
     # Step 5: Generate final report
     report_file = base_dir / "firmware_report.txt"

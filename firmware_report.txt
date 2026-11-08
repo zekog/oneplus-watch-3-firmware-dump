@@ -9,6 +9,14 @@
 • RTOS Co-processor : Bestechnic BES2610 (Dual-core Cortex-M55 + HiFi4 DSP / SSHUB)
 • OS Version        : Android 14 (Wear OS 4 / 5) - boot image header v4 (GKI)
 • Userspace ABI     : ARM 32-bit (armeabi-v7a) with ARM64 Linux Kernel
+• Firmware Build    : OPWWE251_11_A.127_250520
+• OTA Version       : OPWWE251_11.A.127_1270_202505202143
+• Build Date        : Tue May 20 22:59:40 CST 2025
+• Security Patch    : 2025-05-01
+
+  Scope note: this report covers the full-OTA build above. The newer
+  OPWWE251_11_A.165 build (Linux 5.15.185) is shipped as an incremental
+  update only and is therefore NOT represented by these artifacts.
 
 2. LINUX KERNEL EXTRACTION STATUS VIA MAGISKBOOT
 --------------------------------------------------------------------------------

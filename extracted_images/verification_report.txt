@@ -1,6 +1,10 @@
 ANDROID OTA FIRMWARE EXTRACTION VERIFICATION REPORT
 Directory: /home/zek/Pobrane/opw3 firmware/extracted_images
 Generated at: 2026-10-09 19:22:57
+OTA Build: OnePlus/OPWWE251/OPWWE251:14/AW2A.240903.001.A3.OPWWE251_11_A.127.250520/01:user/release-keys
+Build Incremental: 01
+Security Patch Level: 2025-05-01
+Package Type: full (A.127; A.165 is published as an incremental-only OTA and has no dump)
 
 ------------------------------------------------------------------------
 No.  | Filename             | Size (MB)      | Size (Bytes)     | Status

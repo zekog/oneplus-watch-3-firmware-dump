@@ -18,6 +18,52 @@ from pathlib import Path
 
 SDAT2IMG_URL = "https://raw.githubusercontent.com/xpirt/sdat2img/master/sdat2img.py"
 
+
+def read_ota_metadata(work_dir: Path) -> dict:
+    """
+    Parses META-INF/com/android/metadata to identify the OTA build and package type.
+
+    Full OTAs ship complete *.new.dat.br partition payloads and can be unpacked.
+    Incremental (delta) OTAs ship only *.patch.dat block patches and cannot be
+    turned into partition images (e.g. OPWWE251_11_A.165).
+    """
+    meta = {
+        "post_build": "unknown",
+        "post_build_incremental": "unknown",
+        "security_patch": "unknown",
+        "pre_device": "unknown",
+        "package_type": "unknown",
+    }
+
+    meta_file = work_dir / "META-INF" / "com" / "android" / "metadata"
+    if meta_file.exists():
+        try:
+            for raw in meta_file.read_text(encoding="utf-8", errors="replace").splitlines():
+                key, _, value = raw.strip().partition("=")
+                key = key.strip()
+                if key == "post-build":
+                    meta["post_build"] = value.strip()
+                elif key == "post-build-incremental":
+                    meta["post_build_incremental"] = value.strip()
+                elif key == "post-security-patch-level":
+                    meta["security_patch"] = value.strip()
+                elif key == "pre-device":
+                    meta["pre_device"] = value.strip()
+        except Exception:
+            pass
+
+    has_full_payload = any(work_dir.glob("*.new.dat.br")) or any(work_dir.glob("*.new.dat"))
+    has_patch_payload = any(work_dir.glob("*.patch.dat"))
+
+    if has_full_payload:
+        meta["package_type"] = "full"
+    elif has_patch_payload:
+        meta["package_type"] = "incremental"
+    elif meta_file.exists():
+        meta["package_type"] = "unknown (no partition payloads present)"
+
+    return meta
+
 FALLBACK_SDAT2IMG_CODE = '''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import sys, os, errno
@@ -302,7 +348,7 @@ def copy_existing_images(work_dir: Path, output_dir: Path):
     print("[OK] Copying pre-existing images complete.\n")
 
 
-def generate_verification_report(output_dir: Path):
+def generate_verification_report(output_dir: Path, ota_meta: dict | None = None):
     """Step 6: Verifies output directory contents and generates a detailed report."""
     print("=" * 70)
     print("STEP 6: Validating files and generating final verification report...")
@@ -320,6 +366,11 @@ def generate_verification_report(output_dir: Path):
     report_lines.append("ANDROID OTA FIRMWARE EXTRACTION VERIFICATION REPORT")
     report_lines.append(f"Directory: {output_dir.resolve()}")
     report_lines.append(f"Generated at: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    if ota_meta:
+        report_lines.append(f"OTA Build: {ota_meta.get('post_build', 'unknown')}")
+        report_lines.append(f"Build Incremental: {ota_meta.get('post_build_incremental', 'unknown')}")
+        report_lines.append(f"Security Patch Level: {ota_meta.get('security_patch', 'unknown')}")
+        report_lines.append(f"Package Type: {ota_meta.get('package_type', 'unknown')}")
     report_lines.append("")
     report_lines.append(separator)
     report_lines.append(header)
@@ -385,6 +436,16 @@ def main():
     # Step 1: Verify and install dependencies
     check_and_install_dependencies()
 
+    # Step 1b: Identify the OTA build and package type (full vs incremental)
+    ota_meta = read_ota_metadata(work_dir)
+    print(f"[*] OTA build       : {ota_meta['post_build']}")
+    print(f"[*] Package type    : {ota_meta['package_type']}")
+    print(f"[*] Security patch  : {ota_meta['security_patch']}\n")
+    if ota_meta["package_type"] == "incremental":
+        print("  [!] Incremental (delta) OTA detected: it contains only *.patch.dat block")
+        print("      patches, not full partition images. Partitions cannot be reconstructed")
+        print("      without the previously installed base build. No dump can be produced.\n")
+
     # Step 2: Ensure sdat2img.py is present
     ensure_sdat2img(sdat2img_file)
 
@@ -398,7 +459,7 @@ def main():
     copy_existing_images(work_dir, output_dir)
 
     # Step 6: Validate files and generate report
-    generate_verification_report(output_dir)
+    generate_verification_report(output_dir, ota_meta)
 
     total_time = time.time() - start_total_time
     print(f"[SUCCESS] Total execution time: {total_time:.2f} s.\n")

@@ -19,6 +19,8 @@ Complete reverse engineering of EDL flash process for OPWWE251.
 - A.94: 445b937d961b24639d3faf8003631b328f45fc7d873875ede69dd1403bd76dbd
 - A.108: 6d56a50fcb3f556ff85870532dfa7499af8626cff7cf2302978bf9f5b5dd8057
 - A.131: 37fe070e2d91af8ae9b8...
+- A.127: not captured (build dumped in this repository)
+- A.165: unobtainable from the update package (incremental-only OTA, no full dump)
 - Sent after `<verify>`, before hardcoded GPT patch
 
 ### Packet 8 (signed CDT)
@@ -40,3 +42,9 @@ Complete reverse engineering of EDL flash process for OPWWE251.
 ## References
 - See `reports/edl_recovery_notes.md` for older notes
 - See `reports/cve_2026_25262_analysis.md` for CVE dead end
+- See `reports/firmware_versions.md` for build/kernel coverage
+
+## Firmware Coverage Note
+- All artifacts and captures described here come from build `OPWWE251_11_A.127` (Linux 5.15.170).
+- Build `OPWWE251_11_A.165` (Linux 5.15.185) is published as an **incremental (delta) OTA** only. It contains block patches against an installed A.127 base rather than full partition images, so it cannot be unpacked into a firmware dump and no A.165 Packet 4 token is recorded.
+- Obtaining A.165 internals requires a full OTA package or a device-side pull of the running partitions.

@@ -1,9 +1,10 @@
 ================================================================================
 OnePlus Watch 3 (OPWWE251) - GKI Kernel Symbol & Driver Audit Report
 Target: extracted_images/kernel_with_symbols.elf
+Firmware Build: OPWWE251_11_A.127 (A.165 is incremental-only, not dumped)
 Total Symbols in ELF: 141776
 Architecture: AArch64 (ARM64)
-Kernel: Linux 5.15.170-android14-11 (Generic Kernel Image / GKI)
+Kernel: Linux 5.15.170-android14-11-maybe-dirty (Generic Kernel Image / GKI)
 ================================================================================
 
 1. ARCHITECTURAL SUMMARY

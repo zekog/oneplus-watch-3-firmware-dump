@@ -3,6 +3,16 @@
 This directory contains the complete reverse engineering analysis of the
 OnePlus Watch 3 (OPWWE251) firmware, performed using REA + Ghidra.
 
+## Firmware Scope
+
+All analysis targets build **`OPWWE251_11_A.127`** (Linux **5.15.170**-android14-11,
+security patch 2025-05-01), extracted from a **full OTA** package.
+
+The newer public build **`OPWWE251_11_A.165`** runs Linux **5.15.185**, but OnePlus
+ships it as an **incremental (delta) OTA**: no full partition images are included,
+so no A.165 firmware dump exists and none can be generated from the update package.
+Findings below therefore describe A.127 unless stated otherwise.
+
 ## Summary of Key Findings
 
 ### 1. Bootloader & EDL (xbl_analysis/)
@@ -97,6 +107,9 @@ This reverse engineering documentation is structured by subsystem to aid develop
 
 ### `engineer_hal/`
 - `engineer_so_findings.md`: Partition write protect implementation in `vendor.oplus.hardware.engineer@1.0.so` and `oplusreserve1` storage offset.
+
+### Version Reference
+- `firmware_versions.md`: Which OTA build each artifact came from (`A.127`, Linux 5.15.170) and why `A.165` (Linux 5.15.185) has no dump - it ships as an incremental-only update.
 
 ### Decompiled Sources (`reports/*.c`)
 - `abl_decompiled.c`: Decompiled routines from ABL (LinuxLoader.efi).

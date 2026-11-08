@@ -36,7 +36,8 @@ graph TB
 
 - **Role:** Heavy computing, Android runtime (ART), graphical user interface rendering, user apps, Wear OS services, voice assistant, cellular modem management.
 - **CPU/GPU:** 4x ARM Cortex-A53 up to 1.7 GHz, Adreno 702 GPU.
-- **Operating System:** Wear OS 14 (Android 14 GKI, Linux kernel 5.15.170-android14-11-ge97c0f1666c8-ab12933924).
+- **Operating System:** Wear OS 14 (Android 14 GKI, Linux kernel 5.15.170-android14-11-ge97c0f1666c8-ab12933924), extracted from build `OPWWE251_11_A.127`.
+  - The newer build `OPWWE251_11_A.165` (Linux 5.15.185) is distributed only as an incremental OTA, so no full image or kernel dump exists for it in this repository.
 - **Key Kernel Modules (`vendor_dlkm` / `vendor_boot`):**
   - `msm_video.ko` (3,170 symbols): Hardware video decoding/encoding (H.264, H.265, VP9, Venus HFI).
   - `oplus_ddr_freq.ko` (74 symbols): Interconnect bandwidth and LPDDR4X dynamic frequency scaling (`icc_set_bw`).

@@ -96,5 +96,7 @@ Without valid decryption, invoking engineering commands triggers `"decrypt first
 | **Direct Shell Dialing** | ❌ Blocked | `android:exported="false"` prevents `uid=2000` from launching activities/receivers. |
 | **Fastboot OEM Commands** | ⚠️ Partial | `fastboot oem edl` functions. Partition flashing commands are rejected by locked bootloader. |
 | **EDL Firehose Flashing** | ⏳ Blocked | EDL mode (`05c6:9008`) is accessible, but requires a signed Firehose programmer (`prog_firehose_ddr.elf` / `xbl_s_devprg_ns.melf`) for SW5100. |
-| **Privilege Escalation** | 🔍 Viable | A kernel vulnerability in Linux 5.15.170 (GKI) or Wear OS 14 framework would grant `uid=0`, bypassing `exported="false"` and enabling direct IPC with `vendor.oplus.hardware.engineer@1.0::IEngineer`. |
+| **Privilege Escalation** | 🔍 Viable | A kernel vulnerability in Linux 5.15.170 (GKI, build A.127) or Wear OS 14 framework would grant `uid=0`, bypassing `exported="false"` and enabling direct IPC with `vendor.oplus.hardware.engineer@1.0::IEngineer`. |
 | **Secrecy Token Emulation** | 🔬 Theoretical | Reverse engineering the cryptographic verification in `l.a()` may allow local offline token generation. |
+
+> Build note: these numbers describe `OPWWE251_11_A.127` (Linux 5.15.170). The newer `A.165` build ships Linux 5.15.185 but is incremental-only, so it has not been analyzed here.
